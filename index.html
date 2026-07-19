@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#090912">
+<title>SOUL PARADE | A Journey to the Light</title>
+<style>
+  :root{
+    --night:#090912;--deep:#15152b;--ink:#20203a;--soul:#dcecff;--flame:#8fe3cf;
+    --higan:#d43a4f;--torii:#c8452c;--moon:#e8c56a;--wisp:#9b6bf2;--danger:#ef685d;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;letter-spacing:0}
+  html,body{width:100%;height:100%;overflow:hidden;background:var(--night);touch-action:none}
+  body{font-family:"Hiragino Mincho ProN","Yu Mincho","Noto Serif JP",serif;color:var(--soul)}
+  button{font:inherit}
+  #game{display:block;width:100vw;height:100dvh;background:var(--night)}
+  .hidden{display:none!important}
+  .screen{position:fixed;inset:0;z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;background:rgba(5,5,14,.82)}
+  .screen::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(3,3,9,.08),rgba(3,3,9,.84));z-index:-1}
+  #titleScreen{justify-content:flex-end;padding-bottom:max(54px,calc(env(safe-area-inset-bottom) + 34px));background:linear-gradient(180deg,rgba(3,3,9,.12),rgba(3,3,9,.92))}
+  .eyebrow{font-size:11px;letter-spacing:5px;color:var(--moon);margin-bottom:10px}
+  h1{font-family:Georgia,"Times New Roman",serif;font-size:46px;line-height:.92;color:#f1f6ff;text-shadow:0 0 24px rgba(143,227,207,.46);max-width:360px}
+  h1 span{display:block;margin-top:12px;font-size:13px;line-height:1.2;letter-spacing:4px;color:var(--flame)}
+  .title-copy{font-size:13px;line-height:1.9;margin-top:18px;color:rgba(236,244,255,.8);max-width:330px}
+  .primary,.secondary,.choice{min-height:46px;border:1px solid rgba(232,197,106,.7);color:var(--moon);background:rgba(9,9,18,.76);padding:10px 24px;margin-top:18px;cursor:pointer}
+  .primary:active,.secondary:active,.choice:active{background:rgba(232,197,106,.17)}
+  .primary{font-size:15px;letter-spacing:4px;min-width:220px}
+  .secondary{font-size:13px;color:var(--soul);border-color:rgba(220,236,255,.36);margin-top:10px}
+  #hud{position:fixed;inset:0 0 auto 0;z-index:10;display:grid;grid-template-columns:1fr auto 1fr;align-items:start;padding:max(10px,env(safe-area-inset-top)) 12px 0;pointer-events:none;text-shadow:0 2px 5px #000}
+  .hud-side{font-size:20px;font-weight:700;line-height:1.05}
+  .hud-side:last-child{text-align:right;color:var(--moon)}
+  .hud-side small{display:block;font-size:9px;letter-spacing:3px;color:rgba(220,236,255,.7);margin-bottom:4px}
+  #stageLabel{font-size:11px;letter-spacing:2px;color:#fff;text-align:center;max-width:154px;line-height:1.35;padding-top:2px}
+  #formationBar{position:fixed;z-index:12;left:50%;bottom:max(12px,env(safe-area-inset-bottom));transform:translateX(-50%);display:grid;grid-template-columns:repeat(3,72px);height:54px;background:rgba(6,6,16,.82);border:1px solid rgba(220,236,255,.22);pointer-events:auto}
+  .form-btn{border:0;border-right:1px solid rgba(220,236,255,.16);background:transparent;color:rgba(220,236,255,.65);font-size:10px;padding:4px;cursor:pointer}
+  .form-btn:last-child{border-right:0}.form-btn.active{color:var(--flame);background:rgba(143,227,207,.13)}
+  .form-icon{display:block;font-size:20px;line-height:22px}
+  #toast{position:fixed;z-index:30;left:50%;bottom:84px;transform:translateX(-50%);width:min(88%,360px);padding:11px 16px;background:rgba(7,7,18,.91);border-left:3px solid var(--flame);font-size:13px;line-height:1.65;text-align:left;opacity:0;transition:opacity .25s;pointer-events:none}
+  #modal{z-index:40;background:rgba(5,5,14,.9)}
+  #modal .chapter{font-size:11px;letter-spacing:4px;color:var(--higan);margin-bottom:10px}
+  #modal h2,.trial h2{font-size:25px;line-height:1.25;color:var(--moon);margin-bottom:14px}
+  #modal p{font-size:14px;line-height:1.95;max-width:350px;color:rgba(236,244,255,.84)}
+  #modalActions{display:flex;flex-direction:column;align-items:center;width:100%;max-width:340px}
+  .trial{z-index:45;background:rgba(5,5,14,.95);justify-content:flex-start;padding-top:max(72px,calc(env(safe-area-inset-top) + 58px));overflow:auto}
+  .trial .rule{font-size:13px;line-height:1.75;max-width:340px;color:rgba(236,244,255,.8);margin-bottom:20px}
+  #numberOptions{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;max-width:340px}
+  .num-btn{width:66px;height:72px;border:0;border-radius:50% 50% 44% 44%;font-size:24px;font-weight:700;color:#111126;background:radial-gradient(circle at 50% 32%,#dacaff,var(--wisp));box-shadow:0 0 16px rgba(155,107,242,.42)}
+  .num-btn.selected{background:radial-gradient(circle at 50% 32%,#d8fff5,var(--flame));box-shadow:0 0 22px rgba(143,227,207,.78)}
+  #trialStatus{min-height:52px;margin-top:16px;font-size:15px;line-height:1.6;color:var(--soul)}
+  #pinCanvas{width:min(82vw,320px);height:min(54vh,430px);border:1px solid rgba(220,236,255,.18);background:rgba(20,20,48,.72)}
+  #judgmentChoices{display:grid;gap:10px;width:min(92%,360px)}
+  #judgment{background:linear-gradient(180deg,rgba(5,5,14,.86),rgba(5,5,14,.68) 52%,rgba(5,5,14,.88))}
+  .choice{width:100%;margin:0;text-align:left;font-size:13px;line-height:1.55;color:var(--soul);border-color:rgba(220,236,255,.3)}
+  #ending{z-index:50;justify-content:flex-end;padding-bottom:max(42px,calc(env(safe-area-inset-bottom) + 26px));background:linear-gradient(180deg,rgba(4,4,10,.08),rgba(4,4,10,.9))}
+  #ending h2{font-family:Georgia,serif;font-size:34px;color:#fff;text-shadow:0 0 25px rgba(143,227,207,.8)}
+  #endingRank{font-size:15px;color:var(--moon);letter-spacing:3px;margin-top:8px}
+  #endingText{font-size:13px;line-height:1.8;max-width:340px;margin-top:14px}
+  #beeCameo{position:fixed;z-index:55;top:23%;left:-80px;font-size:28px;filter:drop-shadow(0 0 8px #f7c63d);pointer-events:none}
+  #portraitBlock{z-index:100;background:#090912}
+  #portraitBlock h2{font-size:22px;color:var(--moon);margin-bottom:12px}
+  #portraitBlock p{font-size:13px;line-height:1.8}
+  @media (orientation:landscape) and (max-height:600px){#portraitBlock{display:flex!important}}
+  @media (max-width:340px){h1{font-size:39px}.title-copy{font-size:12px}.trial{padding-left:14px;padding-right:14px}#formationBar{grid-template-columns:repeat(3,66px)}}
+</style>
+</head>
+<body>
+<canvas id="game"></canvas>
+
+<div id="hud" class="hidden">
+  <div class="hud-side"><small>SOULS</small><span id="soulCount">1</span></div>
+  <div id="stageLabel">黄昏の墓場</div>
+  <div class="hud-side"><small>六文銭</small><span id="coinCount">0</span> 文</div>
+</div>
+
+<div id="formationBar" class="hidden" aria-label="隊列切替">
+  <button class="form-btn active" data-form="line" title="縦一列"><span class="form-icon">⋮</span>縦一列</button>
+  <button class="form-btn" data-form="circle" title="円陣"><span class="form-icon">◉</span>円陣</button>
+  <button class="form-btn" data-form="scatter" title="散開"><span class="form-icon">✣</span>散開</button>
+</div>
+
+<div id="toast"></div>
+
+<section id="titleScreen" class="screen">
+  <div class="eyebrow">JATA KILLER BEES — OFFICIAL B-SIDE</div>
+  <h1>SOUL<br>PARADE<span>A JOURNEY TO THE LIGHT</span></h1>
+  <p class="title-copy">集めるのは兵士ではなく、帰る場所を失くした魂。<br>行列の光で、星のない冥界を照らせ。</p>
+  <button id="startBtn" class="primary">旅をはじめる</button>
+  <button id="continueBtn" class="secondary hidden">提灯から再開</button>
+</section>
+
+<section id="modal" class="screen hidden">
+  <div id="modalChapter" class="chapter"></div>
+  <h2 id="modalTitle"></h2>
+  <p id="modalBody"></p>
+  <div id="modalActions"></div>
+</section>
+
+<section id="numberTrial" class="screen trial hidden">
+  <div class="eyebrow" id="numberChapter">STAGE 2 — 鬼火の森</div>
+  <h2 id="numberTitle">鬼火の合計</h2>
+  <p id="numberRule" class="rule"></p>
+  <div id="numberOptions"></div>
+  <div id="trialStatus"></div>
+  <button id="numberConfirm" class="primary">決定</button>
+</section>
+
+<section id="pinTrial" class="screen trial hidden">
+  <div class="eyebrow">STAGE 3 — 忘却の川</div>
+  <h2 id="pinTitle">業火の檻</h2>
+  <p id="pinRule" class="rule">閂を抜く順番を見極め、清めの水で業火を鎮めよ。</p>
+  <canvas id="pinCanvas" width="320" height="430"></canvas>
+  <div id="pinStatus" class="rule"></div>
+</section>
+
+<section id="judgment" class="screen trial hidden">
+  <div class="eyebrow">FINAL TRIAL — 閻魔の審判</div>
+  <h2 id="judgmentTitle"></h2>
+  <p id="judgmentRule" class="rule"></p>
+  <div id="judgmentChoices"></div>
+</section>
+
+<section id="ending" class="screen hidden">
+  <div class="eyebrow">THE JOURNEY CONTINUES</div>
+  <h2>光の門へ</h2>
+  <div id="endingRank"></div>
+  <p id="endingText"></p>
+  <button id="againBtn" class="primary">もう一度導く</button>
+</section>
+
+<div id="beeCameo" class="hidden">🐝　🐝　🐝</div>
+
+<section id="portraitBlock" class="screen hidden">
+  <h2>縦画面で導いてください</h2>
+  <p>SOUL PARADEは、縦にのびる魂の行列を<br>指先で導くゲームです。</p>
+</section>
+
+<script>
+'use strict';
+const cv=document.getElementById('game');
+const ctx=cv.getContext('2d');
+let W=0,H=0,DPR=1,WORLD_H=0,last=performance.now();
+
+const UI={
+  hud:document.getElementById('hud'),formation:document.getElementById('formationBar'),toast:document.getElementById('toast'),
+  souls:document.getElementById('soulCount'),coins:document.getElementById('coinCount'),stage:document.getElementById('stageLabel'),
+  title:document.getElementById('titleScreen'),start:document.getElementById('startBtn'),cont:document.getElementById('continueBtn'),
+  modal:document.getElementById('modal'),modalChapter:document.getElementById('modalChapter'),modalTitle:document.getElementById('modalTitle'),
+  modalBody:document.getElementById('modalBody'),modalActions:document.getElementById('modalActions'),
+  number:document.getElementById('numberTrial'),numberTitle:document.getElementById('numberTitle'),numberRule:document.getElementById('numberRule'),
+  numberOptions:document.getElementById('numberOptions'),trialStatus:document.getElementById('trialStatus'),numberConfirm:document.getElementById('numberConfirm'),
+  pin:document.getElementById('pinTrial'),pinCanvas:document.getElementById('pinCanvas'),pinStatus:document.getElementById('pinStatus'),
+  judgment:document.getElementById('judgment'),judgmentTitle:document.getElementById('judgmentTitle'),
+  judgmentRule:document.getElementById('judgmentRule'),judgmentChoices:document.getElementById('judgmentChoices'),
+  ending:document.getElementById('ending'),endingRank:document.getElementById('endingRank'),endingText:document.getElementById('endingText'),
+  bee:document.getElementById('beeCameo')
+};
+
+const IMG={};
+function loadImage(key,src){const img=new Image();img.src=src;IMG[key]=img;}
+loadImage('cemetery','assets/backgrounds/twilight-cemetery.webp');
+loadImage('river','assets/backgrounds/forgotten-river.webp');
+loadImage('underworld','assets/backgrounds/starless-underworld.webp');
+loadImage('soulEater','assets/bosses/soul-eater.webp');
+loadImage('headless','assets/bosses/headless-warrior.png');
+loadImage('reaper','assets/bosses/reaper.webp');
+loadImage('enma','assets/bosses/enma.webp');
+loadImage('bird','assets/bosses/spirit-bird.webp');
+
+const STAGE_NAMES=['','黄昏の墓場','鬼火の森','忘却の川','星のない冥界','輪廻の塔'];
+const ACCESSORIES=['hat','ribbon','ears','beard','leaf','none'];
+const SAVE_KEY='soul-parade-v1-checkpoint';
+const S={
+  mode:'title',stage:0,time:0,cam:0,souls:1,coins:0,lanterns:0,rescued:0,lost:0,
+  formation:'line',leader:{x:0,y:0,tx:0,ty:0},trail:[],followers:[],pickups:[],hazards:[],lanternObjs:[],
+  echoes:[],parts:[],exit:null,worldReady:false,damageCooldown:0,checkpoint:1,
+  numberRound:0,numberSelection:[],pinRound:0,boss:null,tower:null,choices:[],leftLights:0,ending:false
+};
+
+function resize(){
+  DPR=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;
+  cv.width=Math.round(W*DPR);cv.height=Math.round(H*DPR);cv.style.width=W+'px';cv.style.height=H+'px';
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+  if(!S.worldReady){WORLD_H=H*2.7;}
+}
+addEventListener('resize',resize);resize();
+function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+function rnd(a,b){return a+Math.random()*(b-a);}
+function dist2(a,b){const x=a.x-b.x,y=a.y-b.y;return x*x+y*y;}
+function show(el){el.classList.remove('hidden');}
+function hide(el){el.classList.add('hidden');}
+function makeSoul(i=0){return{acc:ACCESSORIES[i%ACCESSORIES.length],hue:185+(i*23)%74,phase:rnd(0,Math.PI*2)};}
+function safeStorageGet(){try{return JSON.parse(localStorage.getItem(SAVE_KEY)||'null');}catch{return null;}}
+function saveCheckpoint(){
+  try{localStorage.setItem(SAVE_KEY,JSON.stringify({stage:S.checkpoint,souls:S.souls,coins:S.coins,lanterns:S.lanterns,rescued:S.rescued,choices:S.choices,leftLights:S.leftLights}));}catch{}
+  UI.cont.classList.remove('hidden');
+}
+function clearSave(){try{localStorage.removeItem(SAVE_KEY);}catch{}UI.cont.classList.add('hidden');}
+
+let toastTimer=0;
+function toast(msg,ms=2400){UI.toast.innerHTML=msg;UI.toast.style.opacity=1;clearTimeout(toastTimer);toastTimer=setTimeout(()=>UI.toast.style.opacity=0,ms);}
+function burst(x,y,col,n=16){for(let i=0;i<n;i++){const a=rnd(0,Math.PI*2),sp=rnd(.5,3);S.parts.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-1,life:1,col,size:rnd(2,5)});}}
+
+function setHud(active){UI.hud.classList.toggle('hidden',!active);UI.formation.classList.toggle('hidden',!active);}
+function updateHud(){UI.souls.textContent=S.souls;UI.coins.textContent=S.coins;UI.stage.textContent=STAGE_NAMES[S.stage]||'光の門';}
+function setFormation(form){
+  S.formation=form;
+  document.querySelectorAll('.form-btn').forEach(b=>b.classList.toggle('active',b.dataset.form===form));
+  const names={line:'縦一列：細い道を抜ける',circle:'円陣：仲間を守る',scatter:'散開：広く探す'};
+  toast(names[form],1200);
+}
+document.querySelectorAll('.form-btn').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();setFormation(b.dataset.form);}));
+
+function modal(chapter,title,body,actions){
+  UI.modalChapter.textContent=chapter;UI.modalTitle.textContent=title;UI.modalBody.innerHTML=body;UI.modalActions.innerHTML='';
+  actions.forEach(a=>{const b=document.createElement('button');b.className=a.secondary?'secondary':'primary';b.textContent=a.label;b.onclick=a.action;UI.modalActions.appendChild(b);});
+  show(UI.modal);S.mode='modal';
+}
+function closeModal(){hide(UI.modal);}
+
+function newGame(){
+  clearSave();Object.assign(S,{souls:1,coins:0,lanterns:0,rescued:0,lost:0,formation:'line',choices:[],leftLights:0,checkpoint:1,ending:false});
+  hide(UI.title);setHud(true);beginStage(1,true);
+}
+function continueGame(){
+  const data=safeStorageGet();if(!data){newGame();return;}
+  Object.assign(S,{souls:data.souls||1,coins:data.coins||0,lanterns:data.lanterns||0,rescued:data.rescued||0,choices:data.choices||[],leftLights:data.leftLights||0,checkpoint:data.stage||1});
+  hide(UI.title);setHud(true);beginStage(S.checkpoint,true);
+}
+UI.start.onclick=newGame;UI.cont.onclick=continueGame;
+document.getElementById('againBtn').onclick=()=>{hide(UI.ending);show(UI.title);setHud(false);S.mode='title';};
+if(safeStorageGet())show(UI.cont);
+
+function stageIntro(stage,onStart){
+  const intro={
+    1:['第一幕','黄昏の墓場','散った魂を迎え、提灯を灯して鳥居へ。<br>細い参道は縦一列、広い野は散開が役に立つ。'],
+    2:['第二幕','鬼火の森','鬼火の数字に縛られた魂がいる。<br>三つの数の試練を解き、渡し賃を稼げ。'],
+    3:['第三幕','忘却の川','六文を納め、清めの水を正しく流す。<br>川底には魂喰らいが待っている。'],
+    4:['第四幕','星のない冥界','魂の数だけ闇を照らせ。<br>呼び鈴の音を追い、三つの灯を見つける。'],
+    5:['最終幕','輪廻の塔','これまで覚えた導き方を、すべて使う。<br>塔の頂で死神と閻魔が待つ。']
+  }[stage];
+  modal(intro[0],intro[1],intro[2],[{label:'進む',action:()=>{closeModal();onStart();}}]);
+}
+
+function beginStage(stage,withIntro=false){
+  S.stage=stage;S.checkpoint=stage;updateHud();saveCheckpoint();
+  if(stage===2){stageIntro(2,startNumberTrial);return;}
+  if(stage===3){stageIntro(3,startPinTrial);return;}
+  if(stage===5){stageIntro(5,startTower);return;}
+  const start=()=>setupExplore(stage);
+  if(withIntro||stage===4||stage===1)stageIntro(stage,start);else start();
+}
+
+function setupExplore(stage){
+  S.mode='explore';S.worldReady=true;WORLD_H=stage===4?H*3.05:H*2.65;
+  S.cam=WORLD_H-H;S.parts=[];S.pickups=[];S.hazards=[];S.lanternObjs=[];S.echoes=[];
+  const spawn={x:W*.5,y:WORLD_H-H*.18};Object.assign(S.leader,{x:spawn.x,y:spawn.y,tx:spawn.x,ty:spawn.y});
+  S.trail=Array.from({length:420},()=>({x:spawn.x,y:spawn.y}));S.followers=Array.from({length:Math.min(S.souls-1,50)},(_,i)=>makeSoul(i+1));
+  S.exit={x:W*.5,y:H*.26,r:58};
+  if(stage===1){
+    const pts=[[.22,.82],[.76,.74],[.32,.61],[.68,.52],[.18,.39],[.82,.31],[.5,.2]];
+    pts.forEach((p,i)=>S.pickups.push({x:W*p[0],y:WORLD_H*p[1],s:makeSoul(S.rescued+i+1),got:false}));
+    [[.68,.69],[.28,.45]].forEach(p=>S.lanternObjs.push({x:W*p[0],y:WORLD_H*p[1],lit:false}));
+    for(let i=0;i<12;i++)S.hazards.push({x:rnd(W*.14,W*.86),y:rnd(H*.55,WORLD_H-H*.35),r:rnd(13,20),phase:rnd(0,7),kind:'wisp'});
+  }else{
+    const pts=[[.18,.86],[.8,.78],[.32,.69],[.68,.59],[.18,.48],[.78,.39],[.36,.3],[.68,.2]];
+    pts.forEach((p,i)=>S.pickups.push({x:W*p[0],y:WORLD_H*p[1],s:makeSoul(S.rescued+i+1),got:false,hidden:true}));
+    [[.2,.77],[.76,.56],[.32,.33]].forEach((p,i)=>S.lanternObjs.push({x:W*p[0],y:WORLD_H*p[1],lit:false,order:i}));
+    [[.74,.72],[.28,.52],[.72,.27]].forEach((p,i)=>S.echoes.push({x:W*p[0],y:WORLD_H*p[1],order:i,heard:false,phase:rnd(0,6)}));
+    for(let i=0;i<16;i++)S.hazards.push({x:rnd(W*.1,W*.9),y:rnd(H*.5,WORLD_H-H*.25),r:rnd(16,25),phase:rnd(0,7),kind:'moth'});
+  }
+  updateHud();
+}
+
+let dragging=false;
+function pointer(e){const p=e.touches?e.touches[0]:e;return{x:p.clientX,y:p.clientY};}
+function pointerWorld(e){const p=pointer(e);return{x:p.x,y:p.y+S.cam};}
+cv.addEventListener('pointerdown',e=>{
+  if(['explore','tower','reaper'].includes(S.mode)){dragging=true;const p=S.mode==='explore'?pointerWorld(e):pointer(e);S.leader.tx=p.x;S.leader.ty=S.mode==='explore'?p.y:clamp(p.y,H*.18,H*.84);}
+  else if(S.mode==='soulBoss')tapSoulBoss(pointer(e));
+  else if(S.mode==='mothBoss')tapMothBoss(pointer(e));
+});
+cv.addEventListener('pointermove',e=>{if(!dragging)return;e.preventDefault();const p=S.mode==='explore'?pointerWorld(e):pointer(e);S.leader.tx=p.x;S.leader.ty=S.mode==='explore'?p.y:clamp(p.y,H*.18,H*.84);},{passive:false});
+addEventListener('pointerup',()=>dragging=false);
+
+function collectSoul(p){p.got=true;S.souls++;S.rescued++;S.followers.push(p.s);burst(p.x,p.y,'#8fe3cf',18);toast('迷子の魂が行列に加わった');updateHud();}
+function hitHazard(h){
+  if(S.damageCooldown>0)return;S.damageCooldown=1.2;
+  if(S.formation==='circle'){toast('円陣が鬼火を受け止めた',1300);burst(S.leader.x,S.leader.y,'#8fe3cf',10);return;}
+  if(S.souls>1){S.souls--;S.lost++;S.followers.pop();toast('魂が散った。少し上流へ戻っている');
+    S.pickups.push({x:clamp(S.leader.x+rnd(-70,70),35,W-35),y:clamp(S.leader.y+H*.17,H*.3,WORLD_H-30),s:makeSoul(S.rescued+S.lost),got:false,returned:true});
+    updateHud();}
+  burst(S.leader.x,S.leader.y,'#ef685d',16);h.phase+=2;
+}
+
+function updateExplore(dt){
+  const L=S.leader;L.tx=clamp(L.tx,24,W-24);L.ty=clamp(L.ty,H*.18,WORLD_H-24);L.x+=(L.tx-L.x)*Math.min(1,dt*9);L.y+=(L.ty-L.y)*Math.min(1,dt*9);
+  S.trail.unshift({x:L.x,y:L.y});S.trail.length=Math.min(S.trail.length,420);
+  S.cam+=(clamp(L.y-H*.56,0,WORLD_H-H)-S.cam)*Math.min(1,dt*6);S.damageCooldown=Math.max(0,S.damageCooldown-dt);
+  const reach=S.formation==='scatter'?74:42;
+  S.pickups.forEach(p=>{if(!p.got&&dist2(L,p)<reach*reach)collectSoul(p);});
+  S.lanternObjs.forEach(l=>{if(!l.lit&&dist2(L,l)<50*50){l.lit=true;S.lanterns++;burst(l.x,l.y,'#e8c56a',24);toast('提灯を灯した ─ 行列の光が強まる');saveCheckpoint();}});
+  S.echoes.forEach(e=>{if(!e.heard&&dist2(L,e)<58*58){e.heard=true;toast(['低い鈴の音……','二つ目の鈴が応えた','隠れた魂たちが目を覚ました'][e.order]);S.pickups.filter((p,i)=>i%3===e.order).forEach(p=>p.hidden=false);}});
+  S.hazards.forEach(h=>{h.phase+=dt*2;if(dist2(L,h)<(h.r+18)*(h.r+18))hitHazard(h);});
+  if(dist2(L,S.exit)<S.exit.r*S.exit.r){
+    if(S.stage===1){const got=S.pickups.filter(p=>p.got&&!p.returned).length,lit=S.lanternObjs.filter(l=>l.lit).length;if(got<5||lit<2){toast(`鳥居はまだ暗い ─ 魂 ${got}/5・提灯 ${lit}/2`);S.leader.ty+=80;}else{S.coins+=3;updateHud();modal('STAGE 1 CLEAR','黄昏に灯る行列','魂を迎え、提灯を灯した。<br>墓守から六文銭を三文授かった。',[{label:'鬼火の森へ',action:()=>{closeModal();beginStage(2);}}]);}}
+    else{const heard=S.echoes.filter(e=>e.heard).length,lit=S.lanternObjs.filter(l=>l.lit).length;if(heard<3||lit<3){toast(`闇の門は開かない ─ 鈴 ${heard}/3・提灯 ${lit}/3`);S.leader.ty+=90;}else{startMothBoss();}}
+  }
+}
+
+const NUMBER_TRIALS=[
+  {title:'魂の合計',rule:'灯す鬼火を選び、合計を <b>七</b> にせよ。',values:[1,2,3,4,6],check:(sel,v)=>sel.reduce((a,i)=>a+v[i],0)===7,status:(sel,v)=>`いまの合計　${sel.reduce((a,i)=>a+v[i],0)}`},
+  {title:'鬼火の順番',rule:'奇数の鬼火だけを、<b>小さい順</b>に選べ。',values:[8,3,5,1,6],ordered:true,check:(sel,v)=>sel.map(i=>v[i]).join(',')==='1,3,5',status:(sel,v)=>`選んだ順　${sel.map(i=>v[i]).join(' → ')||'—'}`},
+  {title:'輪廻の数列',rule:'欠けた数字を一つ選べ。<br><b>二、四、六、？、十</b>',values:[7,8,9],single:true,check:(sel,v)=>sel.length===1&&v[sel[0]]===8,status:(sel,v)=>`選択　${sel.length?v[sel[0]]:'—'}`}
+];
+function startNumberTrial(){closeModal();S.mode='number';S.numberRound=0;S.numberSelection=[];show(UI.number);renderNumberTrial();}
+function renderNumberTrial(){
+  const q=NUMBER_TRIALS[S.numberRound];UI.numberTitle.textContent=q.title;UI.numberRule.innerHTML=q.rule;UI.numberOptions.innerHTML='';S.numberSelection=[];
+  q.values.forEach((v,i)=>{const b=document.createElement('button');b.className='num-btn';b.textContent=v;b.onclick=()=>{
+    if(q.single){S.numberSelection=[i];[...UI.numberOptions.children].forEach(x=>x.classList.remove('selected'));b.classList.add('selected');}
+    else if(q.ordered){if(!S.numberSelection.includes(i)){S.numberSelection.push(i);b.classList.add('selected');}else{S.numberSelection=S.numberSelection.filter(x=>x!==i);b.classList.remove('selected');}}
+    else{if(S.numberSelection.includes(i)){S.numberSelection=S.numberSelection.filter(x=>x!==i);b.classList.remove('selected');}else{S.numberSelection.push(i);b.classList.add('selected');}}
+    UI.trialStatus.textContent=q.status(S.numberSelection,q.values);
+  };UI.numberOptions.appendChild(b);});UI.trialStatus.textContent=q.status([],q.values);
+}
+UI.numberConfirm.onclick=()=>{
+  const q=NUMBER_TRIALS[S.numberRound];if(!q.check(S.numberSelection,q.values)){UI.number.animate([{transform:'translateX(-8px)'},{transform:'translateX(8px)'},{transform:'translateX(0)'}],{duration:300});toast('鬼火が消えた。もう一度考えよう');renderNumberTrial();return;}
+  S.souls+=2;S.rescued+=2;S.coins++;S.numberRound++;updateHud();burst(W*.5,H*.48,'#8fe3cf',18);
+  if(S.numberRound<NUMBER_TRIALS.length){toast('縛りが解けた ─ 魂二体と一文を得た');setTimeout(renderNumberTrial,500);}
+  else{hide(UI.number);S.mode='modal';S.coins+=0;modal('STAGE 2 CLEAR','鬼火の森を抜けた','三つの試練を解き、六文銭が揃った。<br>忘却の川へ進もう。',[{label:'川へ向かう',action:()=>{closeModal();beginStage(3);}}]);}
+};
+
+const pinCtx=UI.pinCanvas.getContext('2d');
+const PIN_LEVELS=[
+  {title:'業火の檻',pins:['water','soul'],sequence:[0,1]},
+  {title:'地獄の業火分岐',pins:['rock','water','soul'],sequence:[1,0,2]},
+  {title:'清めの水位',pins:['water','weight','soul'],sequence:[0,1,2]}
+];
+let pinState={pulled:[],failed:false};
+function startPinTrial(){closeModal();if(S.coins<6){toast('渡し賃が足りない');beginStage(2);return;}S.coins-=6;updateHud();S.pinRound=0;show(UI.pin);S.mode='pin';startPinLevel();}
+function startPinLevel(){pinState={pulled:[],failed:false};document.getElementById('pinTitle').textContent=PIN_LEVELS[S.pinRound].title;UI.pinStatus.textContent=`閂 0 / ${PIN_LEVELS[S.pinRound].pins.length}`;drawPin();}
+UI.pinCanvas.addEventListener('pointerdown',e=>{
+  if(S.mode!=='pin'||pinState.failed)return;const r=UI.pinCanvas.getBoundingClientRect(),y=(e.clientY-r.top)*(430/r.height);
+  const level=PIN_LEVELS[S.pinRound],slot=Math.floor((y-70)/100);if(slot<0||slot>=level.pins.length||pinState.pulled.includes(slot))return;
+  const expected=level.sequence[pinState.pulled.length];if(slot!==expected){pinState.failed=true;UI.pinStatus.textContent='業火が逆流した ─ すぐにやり直す';drawPin();setTimeout(startPinLevel,900);return;}
+  pinState.pulled.push(slot);UI.pinStatus.textContent=`閂 ${pinState.pulled.length} / ${level.pins.length}`;drawPin();
+  if(pinState.pulled.length===level.pins.length){S.souls+=2;S.rescued+=2;updateHud();setTimeout(()=>{S.pinRound++;if(S.pinRound<PIN_LEVELS.length){toast('檻が開いた ─ 次の水路へ');startPinLevel();}else{hide(UI.pin);startSoulEater();}},650);}
+});
+function drawPin(){
+  const c=pinCtx,level=PIN_LEVELS[S.pinRound];c.clearRect(0,0,320,430);c.fillStyle='#161631';c.fillRect(42,12,236,406);c.strokeStyle='rgba(220,236,255,.22)';c.strokeRect(42,12,236,406);
+  level.pins.forEach((kind,i)=>{const y=86+i*100,pulled=pinState.pulled.includes(i);c.fillStyle=kind==='water'?'rgba(108,185,245,.76)':kind==='rock'?'#696477':kind==='weight'?'#87765a':'rgba(212,58,79,.64)';c.fillRect(56,y-55,208,68);c.fillStyle='#edf4ff';c.font='15px serif';c.textAlign='center';c.fillText({water:'清めの水',rock:'落石',weight:'重り',soul:'魂の出口'}[kind],160,y-18);
+    c.fillStyle=pulled?'rgba(80,80,100,.25)':'#e8c56a';c.fillRect(pulled?254:28,y+15,pulled?30:264,15);c.fillStyle='#15152b';c.font='11px serif';c.fillText(pulled?'解除':'ここをタップ',160,y+27);});
+  c.fillStyle=pinState.failed?'#ef685d':'#dcecff';c.beginPath();c.arc(160,382,22,0,Math.PI*2);c.fill();c.fillStyle='#15152b';c.beginPath();c.arc(153,379,2.5,0,Math.PI*2);c.arc(167,379,2.5,0,Math.PI*2);c.fill();
+}
+
+function startSoulEater(){
+  S.mode='soulBoss';S.boss={type:'soulEater',freed:0,orbs:Array.from({length:6},(_,i)=>({a:i/6*Math.PI*2,r:80+(i%2)*24}))};setHud(false);
+  toast('魂喰らいに奪われた魂をタップして救え',3000);
+}
+function tapSoulBoss(p){
+  if(!S.boss||S.boss.type!=='soulEater')return;const bx=W*.5,by=H*.43;
+  for(const o of S.boss.orbs){if(o.freed)continue;const x=bx+Math.cos(o.a+S.time*.5)*o.r,y=by+Math.sin(o.a+S.time*.5)*o.r*.55;if((p.x-x)**2+(p.y-y)**2<28**2){o.freed=true;S.boss.freed++;S.souls++;S.rescued++;burst(x,y,'#8fe3cf',18);updateHud();if(S.boss.freed===S.boss.orbs.length){setTimeout(()=>modal('STAGE 3 CLEAR','魂喰らいの飢え','奪われた魂をすべて取り戻した。<br>その先には、星のない闇が口を開けている。',[{label:'闇へ進む',action:()=>{closeModal();setHud(true);beginStage(4);}}]),700);}break;}}
+}
+
+function startMothBoss(){
+  if(S.mode!=='explore')return;
+  S.mode='mothBoss';setHud(false);S.boss={type:'moth',woken:0,sleepers:Array.from({length:5},(_,i)=>({a:i/5*Math.PI*2,woken:false}))};
+  toast('冥界蛾の鱗粉 ─ 眠った魂に触れて起こせ',3000);
+}
+function tapMothBoss(p){
+  const bx=W*.5,by=H*.42;
+  for(const s of S.boss.sleepers){if(s.woken)continue;const x=bx+Math.cos(s.a+S.time*.25)*105,y=by+Math.sin(s.a+S.time*.25)*65;if((p.x-x)**2+(p.y-y)**2<30**2){s.woken=true;S.boss.woken++;burst(x,y,'#8fe3cf',16);if(S.boss.woken===S.boss.sleepers.length){setTimeout(()=>{setHud(true);lightFarewell();},650);}break;}}
+}
+
+function lightFarewell(){
+  if(S.mode!=='explore')return;
+  modal('THE LIGHT FAREWELL','灯火の別れ','暗闇の門には、道を照らす魂が二体必要だ。<br>ここに残すか、全員で闇を進むか。',[
+    {label:'二体を灯り役として先へ送る',action:()=>{S.leftLights=2;S.souls=Math.max(1,S.souls-2);S.choices.push('lights');updateHud();closeModal();beginStage(5);}},
+    {label:'全員で手をつないで進む',secondary:true,action:()=>{S.leftLights=0;S.choices.push('together');closeModal();beginStage(5);}}
+  ]);
+}
+
+function startTower(){
+  closeModal();S.mode='tower';S.worldReady=false;S.tower={distance:0,spawn:0,objects:[],section:0};setHud(true);Object.assign(S.leader,{x:W*.5,y:H*.78,tx:W*.5,ty:H*.78});toast('塔は崩れ始めている ─ 光を集めて登れ');
+}
+function spawnTowerObject(){
+  const good=Math.random()<.42;S.tower.objects.push({kind:good?'soul':'rock',x:rnd(40,W-40),y:-40,r:good?13:rnd(17,27),vy:rnd(120,190)});
+}
+function updateTower(dt){
+  const L=S.leader;L.x+=(clamp(L.tx,25,W-25)-L.x)*Math.min(1,dt*10);L.y+=(clamp(L.ty,H*.22,H*.83)-L.y)*Math.min(1,dt*10);
+  S.tower.distance+=dt*60;S.tower.spawn-=dt;if(S.tower.spawn<=0){S.tower.spawn=rnd(.45,.8);spawnTowerObject();}
+  for(const o of S.tower.objects){o.y+=o.vy*dt;if(!o.hit&&(L.x-o.x)**2+(L.y-o.y)**2<(o.r+17)**2){o.hit=true;if(o.kind==='soul'){S.souls++;S.rescued++;burst(o.x,o.y,'#8fe3cf',12);}else if(S.formation==='circle'){toast('円陣で落石を防いだ',900);}else{S.souls=Math.max(1,S.souls-1);S.lost++;burst(o.x,o.y,'#ef685d',12);}updateHud();}}
+  S.tower.objects=S.tower.objects.filter(o=>!o.hit&&o.y<H+50);
+  if(S.tower.distance>170&&S.tower.section===0){S.tower.section=1;startTowerNumberGate();}
+  else if(S.tower.distance>350&&S.tower.section===1){S.tower.section=2;startTowerLatch();}
+  else if(S.tower.distance>560&&S.tower.section===2){S.tower.section=3;startHeadless();}
+}
+
+function resumeTower(){closeModal();S.mode='tower';}
+function startTowerNumberGate(){
+  modal('TOWER TRIAL','輪廻の数門','二、四、六、八、十。<br>次に門へ刻む数は？',[
+    {label:'十二',action:()=>{S.choices.push('number');toast('数門が開いた');resumeTower();}},
+    {label:'十三',secondary:true,action:()=>{S.souls=Math.max(1,S.souls-1);updateHud();toast('門が魂を一体はじいた');resumeTower();}}
+  ]);
+}
+function startTowerLatch(){
+  modal('TOWER TRIAL','最後の閂','業火の上に清めの水がある。<br>先に動かすのは？',[
+    {label:'清めの水',action:()=>{S.choices.push('latch');toast('業火が静まり、階段が現れた');resumeTower();}},
+    {label:'業火の閂',secondary:true,action:()=>{S.souls=Math.max(1,S.souls-1);updateHud();toast('業火が逆流した');resumeTower();}}
+  ]);
+}
+
+function startHeadless(){S.mode='headless';S.boss={type:'headless',timer:0,attacks:0,state:'warn',success:0};toast('首なし武者の衝撃波 ─ 円陣で三度しのげ',3000);}
+function updateHeadless(dt){
+  const b=S.boss;b.timer+=dt;if(b.state==='warn'&&b.timer>1.8){b.state='strike';b.timer=0;b.attacks++;if(S.formation==='circle'){b.success++;burst(W*.5,H*.72,'#8fe3cf',24);toast('円陣が衝撃波をそらした');}else{S.souls=Math.max(1,S.souls-2);S.lost+=2;updateHud();toast('隊列が分断された ─ 円陣に切り替えよう');}}
+  else if(b.state==='strike'&&b.timer>.7){if(b.attacks>=3){S.mode='reaper';S.boss={type:'reaper',timer:0,hits:0,waves:[],spawn:0};Object.assign(S.leader,{x:W*.5,y:H*.76,tx:W*.5,ty:H*.76});setHud(false);toast('死神の試験 ─ 主人公ひとりで八秒逃げ切れ',3000);}else{b.state='warn';b.timer=0;}}
+}
+function updateReaper(dt){
+  const b=S.boss,L=S.leader;b.timer+=dt;b.spawn-=dt;L.x+=(clamp(L.tx,24,W-24)-L.x)*Math.min(1,dt*12);L.y+=(clamp(L.ty,H*.3,H*.86)-L.y)*Math.min(1,dt*12);
+  if(b.spawn<=0){b.spawn=.75;b.waves.push({x:rnd(20,W-20),y:-30,r:rnd(18,30),vy:rnd(190,270),hit:false});}
+  b.waves.forEach(w=>{w.y+=w.vy*dt;if(!w.hit&&(L.x-w.x)**2+(L.y-w.y)**2<(w.r+15)**2){w.hit=true;b.hits++;burst(w.x,w.y,'#ef685d',16);toast(`鎌の影 ${b.hits}/3`);}});b.waves=b.waves.filter(w=>!w.hit&&w.y<H+40);
+  if(b.hits>=3){b.timer=0;b.hits=0;b.waves=[];toast('死神が時を戻した ─ もう一度',2200);}
+  if(b.timer>=8){startJudgment();}
+}
+
+const JUDGMENTS=[
+  {q:'川辺で、一体だけ遅れている魂がいる。',answers:[['行列を止めて待つ','wait'],['先へ進み、提灯を目印に残す','guide']]},
+  {q:'自分の記憶と、迷子の魂。先に救うのは？',answers:[['迷子の魂','others'],['自分の記憶','self']]},
+  {q:'輪廻の門をくぐれるのが一人だけなら？',answers:[['次の魂を案内する役を引き受ける','guide'],['いちばん幼い魂を先に行かせる','others']]}
+];
+function startJudgment(){S.mode='judgment';S.judgmentIndex=0;hide(UI.hud);hide(UI.formation);show(UI.judgment);renderJudgment();}
+function renderJudgment(){
+  const q=JUDGMENTS[S.judgmentIndex];UI.judgmentTitle.textContent=`問 ${S.judgmentIndex+1}`;UI.judgmentRule.textContent=q.q;UI.judgmentChoices.innerHTML='';
+  q.answers.forEach(([label,value])=>{const b=document.createElement('button');b.className='choice';b.textContent=label;b.onclick=()=>{S.choices.push(value);S.judgmentIndex++;if(S.judgmentIndex<JUDGMENTS.length)renderJudgment();else{hide(UI.judgment);finishGame();}};UI.judgmentChoices.appendChild(b);});
+}
+
+function finishGame(){
+  S.mode='ending';S.ending=true;clearSave();setHud(false);show(UI.ending);
+  const total=S.rescued+S.souls,compassion=S.choices.filter(x=>['lights','wait','guide','others'].includes(x)).length;
+  const rank=total>=24?'万灯の案内役':total>=16?'魂灯の案内役':'黄昏の案内役';UI.endingRank.textContent=rank;
+  UI.endingText.innerHTML=`救った魂 ${S.rescued}体。灯した提灯 ${S.lanterns}基。<br>${S.leftLights?'灯り役の二体は、光の門で先に待っていた。':'誰の手も離さず、行列は塔を登りきった。'}<br><br>霊鳥は主人公を空へ運ぶ。<br>次に迷う魂のため、主人公は新しい案内役になった。`;
+  setTimeout(()=>{UI.bee.classList.remove('hidden');UI.bee.animate([{left:'-90px'},{left:(W+90)+'px'}],{duration:6000,easing:'linear'});setTimeout(()=>UI.bee.classList.add('hidden'),6200);},1200);
+}
+
+function update(dt){
+  S.time+=dt;S.parts.forEach(p=>{p.x+=p.vx*60*dt;p.y+=p.vy*60*dt;p.vy+=2.8*dt;p.life-=dt*1.8;});S.parts=S.parts.filter(p=>p.life>0);
+  if(S.mode==='explore')updateExplore(dt);else if(S.mode==='tower')updateTower(dt);else if(S.mode==='headless')updateHeadless(dt);else if(S.mode==='reaper')updateReaper(dt);
+}
+
+function drawCover(img,alpha=1){if(!img||!img.complete||!img.naturalWidth)return false;const sc=Math.max(W/img.naturalWidth,H/img.naturalHeight),dw=img.naturalWidth*sc,dh=img.naturalHeight*sc;ctx.globalAlpha=alpha;ctx.drawImage(img,(W-dw)/2,(H-dh)/2,dw,dh);ctx.globalAlpha=1;return true;}
+function drawBackground(){
+  const img=S.stage===1?IMG.cemetery:S.stage===3?IMG.river:IMG.underworld;const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'#111126');g.addColorStop(1,'#090912');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);drawCover(img,.58);ctx.fillStyle='rgba(5,5,14,.28)';ctx.fillRect(0,0,W,H);
+}
+function drawSoul(x,y,s,r=10,alpha=1){
+  ctx.save();ctx.globalAlpha=alpha;ctx.shadowColor='rgba(143,227,207,.6)';ctx.shadowBlur=10;ctx.fillStyle=`hsl(${s.hue},80%,88%)`;ctx.beginPath();ctx.moveTo(x,y-r-5);ctx.quadraticCurveTo(x+r,y-2,x,y+r);ctx.quadraticCurveTo(x-r,y-2,x,y-r-5);ctx.fill();ctx.shadowBlur=0;ctx.fillStyle='#15152b';ctx.beginPath();ctx.arc(x-3,y-2,1.8,0,Math.PI*2);ctx.arc(x+3,y-2,1.8,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#e8c56a';ctx.fillStyle='#e8c56a';ctx.lineWidth=2;
+  if(s.acc==='hat'){ctx.fillRect(x-5,y-r-9,10,3);ctx.fillRect(x-3,y-r-14,6,5);}else if(s.acc==='ribbon'){ctx.beginPath();ctx.arc(x-5,y-r-5,3,0,Math.PI*2);ctx.arc(x,y-r-5,3,0,Math.PI*2);ctx.fill();}else if(s.acc==='ears'){ctx.beginPath();ctx.moveTo(x-6,y-r);ctx.lineTo(x-3,y-r-9);ctx.lineTo(x,y-r);ctx.moveTo(x,y-r);ctx.lineTo(x+3,y-r-9);ctx.lineTo(x+6,y-r);ctx.fill();}else if(s.acc==='beard'){ctx.fillRect(x-4,y+4,8,2);}else if(s.acc==='leaf'){ctx.beginPath();ctx.ellipse(x+3,y-r-8,5,2,-.5,0,Math.PI*2);ctx.fill();}
+  ctx.restore();
+}
+function drawLeader(x,y){drawSoul(x,y,{hue:188,acc:'none'},14);const f=7+Math.sin(S.time*7)*2;ctx.fillStyle='#8fe3cf';ctx.beginPath();ctx.moveTo(x,y-35-f);ctx.quadraticCurveTo(x+6,y-27,x,y-20);ctx.quadraticCurveTo(x-6,y-27,x,y-35-f);ctx.fill();}
+function followerPosition(i){
+  if(S.formation==='line'){return S.trail[Math.min((i+1)*10,S.trail.length-1)]||S.leader;}
+  const base=S.trail[Math.min(24+Math.floor(i/8)*10,S.trail.length-1)]||S.leader,a=i*2.4;
+  if(S.formation==='circle'){const r=24+Math.floor(i/10)*12;return{x:base.x+Math.cos(a)*r,y:base.y+Math.sin(a)*r};}
+  const r=34+Math.floor(i/7)*15;return{x:base.x+Math.cos(a)*r,y:base.y+Math.sin(a)*r*.65};
+}
+function drawLantern(l){ctx.fillStyle=l.lit?'#e8c56a':'#45455d';ctx.fillRect(l.x-3,l.y,6,25);ctx.beginPath();ctx.ellipse(l.x,l.y-13,11,15,0,0,Math.PI*2);ctx.fill();if(l.lit){ctx.fillStyle='rgba(232,197,106,.18)';ctx.beginPath();ctx.arc(l.x,l.y-13,70,0,Math.PI*2);ctx.fill();}}
+function drawTorii(x,y){ctx.fillStyle='#c8452c';ctx.fillRect(x-54,y-48,8,90);ctx.fillRect(x+46,y-48,8,90);ctx.fillRect(x-66,y-54,132,10);ctx.fillRect(x-56,y-30,112,7);ctx.fillStyle='rgba(232,197,106,.22)';ctx.beginPath();ctx.arc(x,y,42,0,Math.PI*2);ctx.fill();}
+function drawExplore(){
+  drawBackground();ctx.save();ctx.translate(0,-S.cam);
+  ctx.strokeStyle='rgba(220,236,255,.12)';ctx.lineWidth=2;ctx.setLineDash([4,12]);ctx.beginPath();ctx.moveTo(W*.5,WORLD_H-H*.15);ctx.bezierCurveTo(W*.15,WORLD_H*.7,W*.85,WORLD_H*.42,S.exit.x,S.exit.y);ctx.stroke();ctx.setLineDash([]);
+  for(let i=0;i<42;i++){const x=(i*83)%W,y=(i*127)%WORLD_H;ctx.fillStyle='rgba(212,58,79,.7)';ctx.beginPath();ctx.arc(x,y,3,0,Math.PI*2);ctx.fill();}
+  S.lanternObjs.forEach(drawLantern);S.echoes.forEach(e=>{if(!e.heard){ctx.strokeStyle='rgba(143,227,207,.45)';ctx.lineWidth=2;ctx.beginPath();ctx.arc(e.x,e.y,18+Math.sin(S.time*4+e.phase)*6,0,Math.PI*2);ctx.stroke();}});
+  S.pickups.forEach(p=>{if(!p.got&&!p.hidden)drawSoul(p.x,p.y+Math.sin(S.time*3+p.s.phase)*3,p.s,11,.9);});
+  S.hazards.forEach(h=>{const x=h.x+Math.sin(h.phase)*12,y=h.y+Math.cos(h.phase*.7)*8;ctx.fillStyle=h.kind==='moth'?'rgba(138,90,175,.58)':'rgba(155,107,242,.52)';ctx.beginPath();ctx.ellipse(x,y,h.r,h.r*(h.kind==='moth'?.52:1),0,0,Math.PI*2);ctx.fill();if(h.kind==='moth'){ctx.strokeStyle='rgba(220,236,255,.35)';ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x-h.r,y-h.r*.65);ctx.moveTo(x,y);ctx.lineTo(x+h.r,y-h.r*.65);ctx.stroke();}});
+  drawTorii(S.exit.x,S.exit.y);for(let i=Math.min(S.followers.length,50)-1;i>=0;i--){const p=followerPosition(i);drawSoul(p.x,p.y,S.followers[i],9,.92);}drawLeader(S.leader.x,S.leader.y);
+  S.parts.forEach(p=>{ctx.globalAlpha=p.life;ctx.fillStyle=p.col;ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;});
+  const light=(92+Math.min(50,S.souls)*5+S.lanterns*12)*(S.stage===4?1:1.25),d=ctx.createRadialGradient(S.leader.x,S.leader.y,light*.35,S.leader.x,S.leader.y,light*1.8);d.addColorStop(0,'rgba(4,4,12,0)');d.addColorStop(1,S.stage===4?'rgba(3,3,10,.97)':'rgba(3,3,10,.72)');ctx.fillStyle=d;ctx.fillRect(0,S.cam-30,W,H+60);ctx.restore();
+}
+
+function drawBossImage(img,x,y,w,h){
+  ctx.save();ctx.shadowColor='rgba(155,107,242,.6)';ctx.shadowBlur=24;ctx.fillStyle='#0b0b18';ctx.fillRect(x-w/2-4,y-h/2-4,w+8,h+8);ctx.shadowBlur=0;ctx.strokeStyle='#e8c56a';ctx.lineWidth=3;ctx.strokeRect(x-w/2-4,y-h/2-4,w+8,h+8);if(img&&img.complete&&img.naturalWidth){const sc=Math.max(w/img.naturalWidth,h/img.naturalHeight),dw=img.naturalWidth*sc,dh=img.naturalHeight*sc;ctx.save();ctx.beginPath();ctx.rect(x-w/2,y-h/2,w,h);ctx.clip();ctx.drawImage(img,x-dw/2,y-dh/2,dw,dh);ctx.restore();}ctx.restore();
+}
+function drawSoulBoss(){
+  drawBackground();const bx=W*.5,by=H*.43;drawBossImage(IMG.soulEater,bx,by,Math.min(W*.58,220),Math.min(H*.34,280));ctx.fillStyle='#e8c56a';ctx.textAlign='center';ctx.font='700 18px serif';ctx.fillText('魂喰らい',bx,H*.14);ctx.font='12px serif';ctx.fillStyle='#dcecff';ctx.fillText(`奪われた魂 ${S.boss.freed}/6`,bx,H*.18);
+  S.boss.orbs.forEach((o,i)=>{if(o.freed)return;const x=bx+Math.cos(o.a+S.time*.5)*o.r,y=by+Math.sin(o.a+S.time*.5)*o.r*.55;drawSoul(x,y,makeSoul(i),12);});ctx.textAlign='left';
+}
+function drawMothBoss(){
+  drawBackground();const bx=W*.5,by=H*.42,pulse=1+Math.sin(S.time*4)*.08;
+  ctx.save();ctx.translate(bx,by);ctx.scale(pulse,pulse);ctx.fillStyle='rgba(155,107,242,.72)';ctx.beginPath();ctx.ellipse(-48,0,55,82,-.55,0,Math.PI*2);ctx.ellipse(48,0,55,82,.55,0,Math.PI*2);ctx.fill();ctx.fillStyle='#302044';ctx.beginPath();ctx.ellipse(0,10,19,65,0,0,Math.PI*2);ctx.fill();ctx.fillStyle='#e8c56a';ctx.beginPath();ctx.arc(-6,-36,3,0,Math.PI*2);ctx.arc(6,-36,3,0,Math.PI*2);ctx.fill();ctx.restore();
+  S.boss.sleepers.forEach((s,i)=>{if(s.woken)return;const x=bx+Math.cos(s.a+S.time*.25)*105,y=by+Math.sin(s.a+S.time*.25)*65;drawSoul(x,y,makeSoul(i),11,.72);});
+  ctx.fillStyle='#e8c56a';ctx.textAlign='center';ctx.font='700 18px serif';ctx.fillText('冥界蛾',bx,H*.13);ctx.fillStyle='#dcecff';ctx.font='12px serif';ctx.fillText(`目覚めた魂 ${S.boss.woken}/5`,bx,H*.17);ctx.textAlign='left';
+}
+function drawTower(){
+  drawBackground();ctx.fillStyle='rgba(7,7,16,.42)';ctx.fillRect(W*.12,0,W*.76,H);ctx.strokeStyle='rgba(232,197,106,.3)';ctx.lineWidth=3;ctx.strokeRect(W*.12,0,W*.76,H);for(let y=(S.time*90)%70-70;y<H;y+=70){ctx.strokeStyle='rgba(220,236,255,.13)';ctx.beginPath();ctx.moveTo(W*.15,y);ctx.lineTo(W*.85,y);ctx.stroke();}
+  S.tower.objects.forEach(o=>{if(o.kind==='soul')drawSoul(o.x,o.y,makeSoul(Math.floor(o.x)),10);else{ctx.fillStyle='#777080';ctx.beginPath();ctx.moveTo(o.x,o.y-o.r);ctx.lineTo(o.x+o.r,o.y+o.r);ctx.lineTo(o.x-o.r,o.y+o.r);ctx.closePath();ctx.fill();}});
+  drawLeader(S.leader.x,S.leader.y);ctx.fillStyle='#e8c56a';ctx.font='12px serif';ctx.textAlign='center';ctx.fillText(`塔の中層まで ${Math.max(0,Math.ceil((560-S.tower.distance)/60))}`,W*.5,H*.14);ctx.textAlign='left';
+}
+function drawHeadless(){
+  drawBackground();const x=W*.5,y=H*.38,b=S.boss,warn=b.state==='warn'?(1-b.timer/1.8):0;
+  ctx.save();ctx.shadowColor='rgba(155,107,242,.65)';ctx.shadowBlur=24;
+  const robe=ctx.createLinearGradient(x-70,y-60,x+70,y+100);robe.addColorStop(0,'#66566d');robe.addColorStop(.45,'#302a3c');robe.addColorStop(1,'#171522');ctx.fillStyle=robe;
+  ctx.beginPath();ctx.moveTo(x-58,y+100);ctx.quadraticCurveTo(x-64,y+22,x-48,y-42);ctx.lineTo(x-22,y-68);ctx.lineTo(x+22,y-68);ctx.lineTo(x+48,y-42);ctx.quadraticCurveTo(x+64,y+22,x+58,y+100);ctx.closePath();ctx.fill();ctx.shadowBlur=0;
+  ctx.fillStyle='#77677e';ctx.beginPath();ctx.ellipse(x-48,y-35,29,22,-.25,0,Math.PI*2);ctx.ellipse(x+48,y-35,29,22,.25,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#b8a9bd';ctx.lineWidth=2;ctx.stroke();
+  ctx.fillStyle='#40354a';ctx.beginPath();ctx.moveTo(x-54,y-22);ctx.lineTo(x-82,y+43);ctx.lineTo(x-62,y+58);ctx.lineTo(x-27,y-4);ctx.closePath();ctx.fill();ctx.beginPath();ctx.moveTo(x+54,y-22);ctx.lineTo(x+82,y+43);ctx.lineTo(x+62,y+58);ctx.lineTo(x+27,y-4);ctx.closePath();ctx.fill();
+  ctx.fillStyle='#a89aa9';ctx.beginPath();ctx.arc(x-72,y+49,9,0,Math.PI*2);ctx.arc(x+72,y+49,9,0,Math.PI*2);ctx.fill();
+  ctx.strokeStyle='rgba(220,236,255,.38)';ctx.lineWidth=2;for(let i=0;i<4;i++){ctx.beginPath();ctx.moveTo(x-31,y-18+i*18);ctx.lineTo(x+31,y-18+i*18);ctx.stroke();}
+  ctx.fillStyle='#8e3041';ctx.fillRect(x-54,y+52,108,13);ctx.fillStyle='#e8c56a';ctx.fillRect(x-5,y+49,10,19);
+  ctx.strokeStyle='#dcecff';ctx.lineWidth=9;ctx.beginPath();ctx.moveTo(x+74,y+39);ctx.lineTo(x-82,y+91);ctx.stroke();ctx.strokeStyle='#75859c';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(x+70,y+35);ctx.lineTo(x-84,y+87);ctx.stroke();ctx.strokeStyle='#e8c56a';ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(x+55,y+36);ctx.lineTo(x+71,y+56);ctx.stroke();
+  ctx.fillStyle='#8fe3cf';ctx.globalAlpha=.86;ctx.beginPath();ctx.moveTo(x,y-82);ctx.quadraticCurveTo(x+20,y-104,x+4,y-132);ctx.quadraticCurveTo(x-22,y-104,x,y-82);ctx.fill();ctx.globalAlpha=1;ctx.strokeStyle='#e8c56a';ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(x,y-70,21,8,0,0,Math.PI*2);ctx.stroke();
+  ctx.strokeStyle='rgba(143,227,207,.42)';ctx.lineWidth=2;for(let i=0;i<3;i++){ctx.beginPath();ctx.arc(x,y-87,30+i*13,S.time*.6+i,S.time*.6+i+2.1);ctx.stroke();}ctx.restore();
+  ctx.strokeStyle=b.state==='strike'?'#ef685d':'rgba(232,197,106,.8)';ctx.lineWidth=b.state==='strike'?10:3;ctx.beginPath();ctx.arc(W*.5,H*.72,50+warn*150,0,Math.PI*2);ctx.stroke();ctx.fillStyle='#dcecff';ctx.textAlign='center';ctx.font='700 17px serif';ctx.fillText('首なし武者',W*.5,H*.12);ctx.font='13px serif';ctx.fillText(`衝撃波 ${b.attacks}/3　円陣成功 ${b.success}`,W*.5,H*.16);ctx.textAlign='left';
+}
+function drawReaper(){
+  drawBackground();drawBossImage(IMG.reaper,W*.5,H*.26,Math.min(W*.45,170),Math.min(H*.24,190));ctx.fillStyle='rgba(4,4,12,.58)';ctx.fillRect(0,H*.38,W,H*.62);S.boss.waves.forEach(w=>{ctx.strokeStyle='#dcecff';ctx.lineWidth=4;ctx.beginPath();ctx.arc(w.x,w.y,w.r,Math.PI*.1,Math.PI*1.45);ctx.stroke();});drawLeader(S.leader.x,S.leader.y);ctx.fillStyle='#e8c56a';ctx.textAlign='center';ctx.font='700 16px serif';ctx.fillText(`死神の試験　${Math.max(0,8-S.boss.timer).toFixed(1)}`,W*.5,H*.13);ctx.font='12px serif';ctx.fillStyle='#dcecff';ctx.fillText('主人公だけで鎌の影を避ける',W*.5,H*.17);ctx.textAlign='left';
+}
+function drawEndingBackdrop(){
+  drawCover(IMG.bird,.78);const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'rgba(203,232,255,.08)');g.addColorStop(1,'rgba(5,5,14,.76)');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);for(let i=0;i<Math.min(36,S.souls+S.rescued);i++){const a=i*2.4,r=35+Math.floor(i/8)*20,x=W*.5+Math.cos(a)*r,y=H*.62+Math.sin(a)*r*.42;drawSoul(x,y,makeSoul(i),7,.7);}}
+function drawJudgmentBackdrop(){drawBackground();drawBossImage(IMG.enma,W*.5,H*.44,Math.min(W*.64,250),Math.min(H*.42,340));ctx.fillStyle='rgba(5,5,14,.08)';ctx.fillRect(0,0,W,H);}
+function draw(){
+  ctx.clearRect(0,0,W,H);
+  if(S.mode==='explore')drawExplore();else if(S.mode==='soulBoss')drawSoulBoss();else if(S.mode==='mothBoss')drawMothBoss();else if(S.mode==='tower')drawTower();else if(S.mode==='headless')drawHeadless();else if(S.mode==='reaper')drawReaper();else if(S.mode==='judgment')drawJudgmentBackdrop();else if(S.mode==='ending')drawEndingBackdrop();else{drawBackground();}
+  if(S.mode!=='explore')S.parts.forEach(p=>{ctx.globalAlpha=p.life;ctx.fillStyle=p.col;ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;});
+}
+
+const localParams=new URLSearchParams(location.search),localTestStage=Number(localParams.get('stage')),localTestBoss=localParams.get('boss');
+const localTesting=location.hostname==='127.0.0.1'||location.hostname==='localhost';
+if(localTesting&&['headless','moth','judgment','ending'].includes(localTestBoss)){
+  setTimeout(()=>{
+    hide(UI.title);Object.assign(S,{stage:localTestBoss==='moth'?4:5,souls:18,coins:0,lanterns:5,rescued:17,lost:0,choices:[],leftLights:0});updateHud();
+    if(localTestBoss==='headless'){setHud(true);startHeadless();}
+    else if(localTestBoss==='moth'){S.mode='explore';startMothBoss();}
+    else if(localTestBoss==='judgment'){startJudgment();}
+    else finishGame();
+  },0);
+}else if(localTesting&&localTestStage>=1&&localTestStage<=5){
+  setTimeout(()=>{
+    hide(UI.title);setHud(true);
+    Object.assign(S,{souls:12,coins:6,lanterns:2,rescued:11,lost:0,choices:[],leftLights:0,checkpoint:localTestStage});
+    beginStage(localTestStage,true);
+  },0);
+}
+function loop(now){const dt=Math.min(.04,(now-last)/1000);last=now;update(dt);draw();requestAnimationFrame(loop);}requestAnimationFrame(loop);
+</script>
+</body>
+</html>
