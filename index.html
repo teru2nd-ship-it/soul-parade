@@ -49,6 +49,15 @@
   .num-btn.selected{background:radial-gradient(circle at 50% 32%,#d8fff5,var(--flame));box-shadow:0 0 22px rgba(143,227,207,.78)}
   #trialStatus{min-height:52px;margin-top:16px;font-size:15px;line-height:1.6;color:var(--soul)}
   #pinCanvas{width:min(82vw,320px);height:min(54vh,430px);border:1px solid rgba(220,236,255,.18);background:rgba(20,20,48,.72)}
+  #pantheonTrial{background:linear-gradient(180deg,rgba(5,5,14,.76),rgba(20,12,35,.88));overflow:hidden}
+  #pantheonDisplay{width:min(92%,360px);min-height:86px;margin:2px 0 16px;padding:14px;border:1px solid rgba(232,197,106,.38);background:rgba(9,9,18,.66);display:flex;align-items:center;justify-content:center;color:var(--moon);font-size:17px;line-height:1.65}
+  #pantheonChoices{display:grid;grid-template-columns:repeat(2,minmax(0,150px));gap:10px;width:min(92%,320px)}
+  .pantheon-btn{height:70px;border:1px solid rgba(220,236,255,.3);background:rgba(21,21,43,.86);color:var(--soul);font:inherit;font-size:13px;line-height:1.35;cursor:pointer}
+  .pantheon-btn strong{display:block;color:var(--moon);font-size:22px;font-weight:500;margin-bottom:2px}
+  .pantheon-btn.selected{border-color:var(--flame);background:rgba(143,227,207,.16);box-shadow:0 0 18px rgba(143,227,207,.24)}
+  .pantheon-btn.pulse{border-color:#fff;background:rgba(232,197,106,.42);box-shadow:0 0 28px rgba(232,197,106,.72);transform:translateY(-3px)}
+  #pantheonStatus{min-height:44px;margin-top:14px;font-size:13px;line-height:1.65;color:rgba(236,244,255,.82)}
+  .myth-band{position:absolute;left:0;right:0;bottom:0;height:9px;background:linear-gradient(90deg,var(--torii) 0 20%,var(--moon) 20% 40%,var(--flame) 40% 60%,var(--wisp) 60% 80%,var(--higan) 80%);opacity:.8}
   #judgmentChoices{display:grid;gap:10px;width:min(92%,360px)}
   #judgment{background:linear-gradient(180deg,rgba(5,5,14,.86),rgba(5,5,14,.68) 52%,rgba(5,5,14,.88))}
   .choice{width:100%;margin:0;text-align:left;font-size:13px;line-height:1.55;color:var(--soul);border-color:rgba(220,236,255,.3)}
@@ -62,6 +71,11 @@
   #portraitBlock p{font-size:13px;line-height:1.8}
   @media (orientation:landscape) and (max-height:600px){#portraitBlock{display:flex!important}}
   @media (max-width:340px){h1{font-size:39px}.title-copy{font-size:12px}.trial{padding-left:14px;padding-right:14px}#formationBar{grid-template-columns:repeat(3,66px)}}
+  @media (orientation:portrait) and (max-height:620px){
+    .trial{padding-top:28px;padding-bottom:18px}.trial .eyebrow{margin-bottom:6px}.trial h2{font-size:21px;margin-bottom:8px}.trial .rule{font-size:12px;line-height:1.5;margin-bottom:9px}
+    #pantheonDisplay{min-height:58px;padding:7px;margin-bottom:8px;font-size:15px}#pantheonChoices{gap:6px}.pantheon-btn{height:56px}#pantheonStatus{min-height:28px;margin-top:7px}
+    #pantheonTrial .primary,#pantheonTrial .secondary{min-height:40px;margin-top:7px;padding:7px 20px}
+  }
 </style>
 </head>
 <body>
@@ -113,6 +127,18 @@
   <div id="pinStatus" class="rule"></div>
 </section>
 
+<section id="pantheonTrial" class="screen trial hidden">
+  <div class="eyebrow">STAGE 5 — 万神冥界市</div>
+  <h2 id="pantheonTitle">冥界の通行印</h2>
+  <p id="pantheonRule" class="rule"></p>
+  <div id="pantheonDisplay"></div>
+  <div id="pantheonChoices"></div>
+  <div id="pantheonStatus"></div>
+  <button id="pantheonConfirm" class="primary">決定</button>
+  <button id="pantheonReplay" class="secondary hidden">もう一度聞く</button>
+  <div class="myth-band"></div>
+</section>
+
 <section id="judgment" class="screen trial hidden">
   <div class="eyebrow">FINAL TRIAL — 閻魔の審判</div>
   <h2 id="judgmentTitle"></h2>
@@ -150,6 +176,9 @@ const UI={
   number:document.getElementById('numberTrial'),numberTitle:document.getElementById('numberTitle'),numberRule:document.getElementById('numberRule'),
   numberOptions:document.getElementById('numberOptions'),trialStatus:document.getElementById('trialStatus'),numberConfirm:document.getElementById('numberConfirm'),
   pin:document.getElementById('pinTrial'),pinCanvas:document.getElementById('pinCanvas'),pinStatus:document.getElementById('pinStatus'),
+  pantheon:document.getElementById('pantheonTrial'),pantheonTitle:document.getElementById('pantheonTitle'),pantheonRule:document.getElementById('pantheonRule'),
+  pantheonDisplay:document.getElementById('pantheonDisplay'),pantheonChoices:document.getElementById('pantheonChoices'),pantheonStatus:document.getElementById('pantheonStatus'),
+  pantheonConfirm:document.getElementById('pantheonConfirm'),pantheonReplay:document.getElementById('pantheonReplay'),
   judgment:document.getElementById('judgment'),judgmentTitle:document.getElementById('judgmentTitle'),
   judgmentRule:document.getElementById('judgmentRule'),judgmentChoices:document.getElementById('judgmentChoices'),
   ending:document.getElementById('ending'),endingRank:document.getElementById('endingRank'),endingText:document.getElementById('endingText'),
@@ -167,14 +196,15 @@ loadImage('reaper','assets/bosses/reaper.webp');
 loadImage('enma','assets/bosses/enma.webp');
 loadImage('bird','assets/bosses/spirit-bird.webp');
 
-const STAGE_NAMES=['','黄昏の墓場','鬼火の森','忘却の川','星のない冥界','輪廻の塔'];
+const STAGE_NAMES=['','黄昏の墓場','鬼火の森','忘却の川','星のない冥界','万神冥界市','輪廻の塔'];
 const ACCESSORIES=['hat','ribbon','ears','beard','leaf','none'];
 const SAVE_KEY='soul-parade-v1-checkpoint';
 const S={
   mode:'title',stage:0,time:0,cam:0,souls:1,coins:0,lanterns:0,rescued:0,lost:0,
   formation:'line',leader:{x:0,y:0,tx:0,ty:0},trail:[],followers:[],pickups:[],hazards:[],lanternObjs:[],
   echoes:[],parts:[],exit:null,worldReady:false,damageCooldown:0,checkpoint:1,
-  numberRound:0,numberSelection:[],pinRound:0,boss:null,tower:null,choices:[],leftLights:0,ending:false
+  numberRound:0,numberSelection:[],pinRound:0,pantheonRound:0,pantheonSelection:[],pantheonStep:0,pantheonLocked:false,
+  boss:null,tower:null,choices:[],leftLights:0,ending:false
 };
 
 function resize(){
@@ -237,7 +267,8 @@ function stageIntro(stage,onStart){
     2:['第二幕','鬼火の森','鬼火の数字に縛られた魂がいる。<br>三つの数の試練を解き、渡し賃を稼げ。'],
     3:['第三幕','忘却の川','六文を納め、清めの水を正しく流す。<br>川底には魂喰らいが待っている。'],
     4:['第四幕','星のない冥界','魂の数だけ闇を照らせ。<br>呼び鈴の音を追い、三つの灯を見つける。'],
-    5:['最終幕','輪廻の塔','これまで覚えた導き方を、すべて使う。<br>塔の頂で死神と閻魔が待つ。']
+    5:['第五幕','万神冥界市','鳥居も石柱も蓮華も、ここでは同じ通りに並ぶ。<br>三つの遊戯で通行印を集め、輪廻の塔へ。'],
+    6:['最終幕','輪廻の塔','これまで覚えた導き方を、すべて使う。<br>塔の頂で死神と閻魔が待つ。']
   }[stage];
   modal(intro[0],intro[1],intro[2],[{label:'進む',action:()=>{closeModal();onStart();}}]);
 }
@@ -246,7 +277,8 @@ function beginStage(stage,withIntro=false){
   S.stage=stage;S.checkpoint=stage;updateHud();saveCheckpoint();
   if(stage===2){stageIntro(2,startNumberTrial);return;}
   if(stage===3){stageIntro(3,startPinTrial);return;}
-  if(stage===5){stageIntro(5,startTower);return;}
+  if(stage===5){stageIntro(5,startPantheonTrials);return;}
+  if(stage===6){stageIntro(6,startTower);return;}
   const start=()=>setupExplore(stage);
   if(withIntro||stage===4||stage===1)stageIntro(stage,start);else start();
 }
@@ -373,11 +405,73 @@ function tapMothBoss(p){
 }
 
 function lightFarewell(){
-  if(S.mode!=='explore')return;
+  if(!['explore','mothBoss'].includes(S.mode))return;
   modal('THE LIGHT FAREWELL','灯火の別れ','暗闇の門には、道を照らす魂が二体必要だ。<br>ここに残すか、全員で闇を進むか。',[
     {label:'二体を灯り役として先へ送る',action:()=>{S.leftLights=2;S.souls=Math.max(1,S.souls-2);S.choices.push('lights');updateHud();closeModal();beginStage(5);}},
     {label:'全員で手をつないで進む',secondary:true,action:()=>{S.leftLights=0;S.choices.push('together');closeModal();beginStage(5);}}
   ]);
+}
+
+const PANTHEON_TRIALS=[
+  {
+    kind:'balance',title:'羽根と記憶の天秤',
+    rule:'左皿の羽根は重さ <b>九</b>。右皿へ記憶を載せ、同じ重さにせよ。',
+    display:'羽根　九　＝　記憶　？',
+    options:[['鈴','二',2],['貝殻','三',3],['仮面','四',4],['小舟','五',5]]
+  },
+  {
+    kind:'echo',title:'輪廻の太鼓',
+    rule:'四方の太鼓が光る。<b>同じ順番</b>で五回たたけ。',
+    display:'東・西・天・地の音を聞く',
+    options:[['東','壱'],['西','弐'],['天','参'],['地','肆']],sequence:[0,2,1,3,2]
+  },
+  {
+    kind:'route',title:'冥界乗換印',
+    rule:'通行札に描かれた順で印を押せ。<br><b>蓮華 → 鳥居 → 舟 → 星門</b>',
+    display:'四つの冥界を、迷わず乗り継ぐ',
+    options:[['鳥居','門'],['冥府の舟','舟'],['蓮華','蓮'],['星の門','星']],sequence:[2,0,1,3]
+  }
+];
+let pantheonDemoToken=0;
+function startPantheonTrials(){
+  closeModal();setHud(false);S.mode='pantheon';S.pantheonRound=0;S.pantheonSelection=[];S.pantheonStep=0;S.pantheonLocked=false;show(UI.pantheon);renderPantheonTrial();
+}
+function renderPantheonTrial(){
+  const q=PANTHEON_TRIALS[S.pantheonRound];pantheonDemoToken++;S.pantheonSelection=[];S.pantheonStep=0;S.pantheonLocked=false;
+  UI.pantheonTitle.textContent=q.title;UI.pantheonRule.innerHTML=q.rule;UI.pantheonDisplay.textContent=q.display;UI.pantheonChoices.innerHTML='';UI.pantheonStatus.textContent=`通行印 ${S.pantheonRound} / ${PANTHEON_TRIALS.length}`;
+  UI.pantheonConfirm.classList.toggle('hidden',q.kind!=='balance');UI.pantheonReplay.classList.toggle('hidden',q.kind!=='echo');
+  q.options.forEach((opt,i)=>{const b=document.createElement('button');b.className='pantheon-btn';b.innerHTML=`<strong>${opt[1]}</strong>${opt[0]}`;b.onclick=()=>handlePantheonChoice(i,b);UI.pantheonChoices.appendChild(b);});
+  if(q.kind==='echo')setTimeout(playPantheonEcho,550);
+}
+function handlePantheonChoice(i,b){
+  const q=PANTHEON_TRIALS[S.pantheonRound];if(S.pantheonLocked)return;
+  if(q.kind==='balance'){
+    if(S.pantheonSelection.includes(i)){S.pantheonSelection=S.pantheonSelection.filter(x=>x!==i);b.classList.remove('selected');}
+    else{S.pantheonSelection.push(i);b.classList.add('selected');}
+    const total=S.pantheonSelection.reduce((sum,k)=>sum+q.options[k][2],0);UI.pantheonStatus.textContent=`右皿の重さ　${total}`;return;
+  }
+  const expected=q.sequence[S.pantheonStep];
+  if(i!==expected){S.pantheonLocked=true;UI.pantheonStatus.textContent=q.kind==='echo'?'音が輪廻して最初へ戻った':'通行札がくるりと裏返った';toast('順番が違う ─ 最初から',1200);setTimeout(()=>q.kind==='echo'?playPantheonEcho():renderPantheonTrial(),700);return;}
+  S.pantheonStep++;b.classList.add('pulse');setTimeout(()=>b.classList.remove('pulse'),220);
+  UI.pantheonStatus.textContent=`正しい順　${S.pantheonStep} / ${q.sequence.length}`;
+  if(q.kind==='route')b.disabled=true;
+  if(S.pantheonStep===q.sequence.length){S.pantheonLocked=true;setTimeout(completePantheonRound,420);}
+}
+function playPantheonEcho(){
+  const q=PANTHEON_TRIALS[S.pantheonRound];if(!q||q.kind!=='echo')return;const token=++pantheonDemoToken,buttons=[...UI.pantheonChoices.children];
+  S.pantheonLocked=true;S.pantheonStep=0;UI.pantheonStatus.textContent='太鼓の光を覚える……';buttons.forEach(b=>b.classList.remove('pulse'));
+  q.sequence.forEach((idx,n)=>setTimeout(()=>{if(token!==pantheonDemoToken)return;buttons[idx].classList.add('pulse');setTimeout(()=>buttons[idx].classList.remove('pulse'),310);},n*520));
+  setTimeout(()=>{if(token!==pantheonDemoToken)return;S.pantheonLocked=false;UI.pantheonStatus.textContent='同じ順番で太鼓をたたく';},q.sequence.length*520+260);
+}
+UI.pantheonReplay.onclick=()=>{if(!S.pantheonLocked)playPantheonEcho();};
+UI.pantheonConfirm.onclick=()=>{
+  const q=PANTHEON_TRIALS[S.pantheonRound];if(q.kind!=='balance')return;const total=S.pantheonSelection.reduce((sum,k)=>sum+q.options[k][2],0);
+  if(total!==9){UI.pantheon.animate([{transform:'translateX(-8px)'},{transform:'translateX(8px)'},{transform:'translateX(0)'}],{duration:300});toast(total<9?'記憶が軽すぎる':'記憶が重すぎる');return;}completePantheonRound();
+};
+function completePantheonRound(){
+  const q=PANTHEON_TRIALS[S.pantheonRound],reward=[2,3,2][S.pantheonRound];pantheonDemoToken++;S.souls+=reward;S.rescued+=reward;S.coins++;S.choices.push(`pantheon-${q.kind}`);updateHud();burst(W*.5,H*.47,'#e8c56a',24);S.pantheonRound++;
+  if(S.pantheonRound<PANTHEON_TRIALS.length){toast(`${q.title} 成功 ─ 魂 ${reward}体と一文`,1500);setTimeout(renderPantheonTrial,650);return;}
+  hide(UI.pantheon);setHud(true);modal('STAGE 5 CLEAR','千面の門番から通行札','三つの冥界印が一枚につながった。<br>日本も西洋もインドも、この先では同じ輪廻へ向かう。',[{label:'輪廻の塔へ',action:()=>{closeModal();beginStage(6);}}]);
 }
 
 function startTower(){
@@ -436,8 +530,8 @@ function renderJudgment(){
 
 function finishGame(){
   S.mode='ending';S.ending=true;clearSave();setHud(false);show(UI.ending);
-  const total=S.rescued+S.souls,compassion=S.choices.filter(x=>['lights','wait','guide','others'].includes(x)).length;
-  const rank=total>=24?'万灯の案内役':total>=16?'魂灯の案内役':'黄昏の案内役';UI.endingRank.textContent=rank;
+  const compassion=S.choices.filter(x=>['lights','wait','guide','others'].includes(x)).length,merit=S.rescued+S.lanterns*2+compassion*2-S.lost;
+  const rank=merit>=42?'万灯の案内役':merit>=28?'魂灯の案内役':'黄昏の案内役';UI.endingRank.textContent=rank;
   UI.endingText.innerHTML=`救った魂 ${S.rescued}体。灯した提灯 ${S.lanterns}基。<br>${S.leftLights?'灯り役の二体は、光の門で先に待っていた。':'誰の手も離さず、行列は塔を登りきった。'}<br><br>霊鳥は主人公を空へ運ぶ。<br>次に迷う魂のため、主人公は新しい案内役になった。`;
   setTimeout(()=>{UI.bee.classList.remove('hidden');UI.bee.animate([{left:'-90px'},{left:(W+90)+'px'}],{duration:6000,easing:'linear'});setTimeout(()=>UI.bee.classList.add('hidden'),6200);},1200);
 }
@@ -448,7 +542,20 @@ function update(dt){
 }
 
 function drawCover(img,alpha=1){if(!img||!img.complete||!img.naturalWidth)return false;const sc=Math.max(W/img.naturalWidth,H/img.naturalHeight),dw=img.naturalWidth*sc,dh=img.naturalHeight*sc;ctx.globalAlpha=alpha;ctx.drawImage(img,(W-dw)/2,(H-dh)/2,dw,dh);ctx.globalAlpha=1;return true;}
+function drawPantheonBackdrop(){
+  const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'#120d29');g.addColorStop(.52,'#241437');g.addColorStop(1,'#071a25');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);drawCover(IMG.underworld,.34);
+  ctx.fillStyle='rgba(8,5,18,.36)';ctx.fillRect(0,0,W,H);
+  const halo=ctx.createRadialGradient(W*.5,H*.2,8,W*.5,H*.2,W*.34);halo.addColorStop(0,'rgba(232,197,106,.46)');halo.addColorStop(.46,'rgba(155,107,242,.18)');halo.addColorStop(1,'rgba(5,5,14,0)');ctx.fillStyle=halo;ctx.beginPath();ctx.arc(W*.5,H*.2,W*.34,0,Math.PI*2);ctx.fill();
+  ctx.save();ctx.translate(W*.5,H*.2);ctx.strokeStyle='rgba(232,197,106,.48)';ctx.lineWidth=2;for(let r=32;r<92;r+=18){ctx.beginPath();ctx.arc(0,0,r,0,Math.PI*2);ctx.stroke();}for(let i=0;i<12;i++){const a=i/12*Math.PI*2;ctx.beginPath();ctx.moveTo(Math.cos(a)*28,Math.sin(a)*28);ctx.lineTo(Math.cos(a)*92,Math.sin(a)*92);ctx.stroke();}ctx.restore();
+  ctx.fillStyle='rgba(84,61,94,.72)';ctx.beginPath();ctx.moveTo(W*.25,H);ctx.lineTo(W*.43,H*.38);ctx.lineTo(W*.57,H*.38);ctx.lineTo(W*.78,H);ctx.closePath();ctx.fill();ctx.strokeStyle='rgba(232,197,106,.38)';ctx.lineWidth=2;ctx.stroke();
+  ctx.fillStyle='rgba(200,69,44,.8)';ctx.fillRect(W*.08,H*.28,7,H*.28);ctx.fillRect(W*.28-7,H*.28,7,H*.28);ctx.fillRect(W*.05,H*.27,W*.26,9);ctx.fillRect(W*.075,H*.34,W*.215,6);
+  ctx.fillStyle='rgba(217,222,232,.42)';for(let i=0;i<3;i++){const x=W*(.74+i*.075);ctx.fillRect(x,H*.26,8,H*.3);ctx.fillRect(x-5,H*.25,18,7);ctx.fillRect(x-5,H*.55,18,7);}
+  ctx.fillStyle='rgba(196,151,73,.34)';ctx.beginPath();ctx.moveTo(W*.68,H*.61);ctx.lineTo(W*.88,H*.61);ctx.lineTo(W*.78,H*.43);ctx.closePath();ctx.fill();
+  ctx.strokeStyle='rgba(143,227,207,.55)';ctx.fillStyle='rgba(143,227,207,.16)';ctx.lineWidth=2;for(let i=0;i<5;i++){const x=W*(.18+i*.16),y=H*(.76+(i%2)*.07),r=18+(i%3)*5;ctx.beginPath();ctx.ellipse(x,y,r,r*.42,0,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.beginPath();ctx.moveTo(x-r*.7,y);ctx.quadraticCurveTo(x,y-r*1.5,x+r*.7,y);ctx.stroke();}
+  for(let i=0;i<9;i++){const x=(i*79+31)%W,y=H*(.12+((i*47)%58)/100);ctx.fillStyle=i%2?'rgba(232,197,106,.72)':'rgba(143,227,207,.66)';ctx.beginPath();ctx.arc(x,y,3+Math.sin(S.time*2+i),0,Math.PI*2);ctx.fill();}
+}
 function drawBackground(){
+  if(S.stage===5){drawPantheonBackdrop();return;}
   const img=S.stage===1?IMG.cemetery:S.stage===3?IMG.river:IMG.underworld;const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'#111126');g.addColorStop(1,'#090912');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);drawCover(img,.58);ctx.fillStyle='rgba(5,5,14,.28)';ctx.fillRect(0,0,W,H);
 }
 function drawSoul(x,y,s,r=10,alpha=1){
@@ -524,15 +631,16 @@ function draw(){
 
 const localParams=new URLSearchParams(location.search),localTestStage=Number(localParams.get('stage')),localTestBoss=localParams.get('boss');
 const localTesting=location.hostname==='127.0.0.1'||location.hostname==='localhost';
-if(localTesting&&['headless','moth','judgment','ending'].includes(localTestBoss)){
+if(localTesting&&['headless','moth','farewell','judgment','ending'].includes(localTestBoss)){
   setTimeout(()=>{
-    hide(UI.title);Object.assign(S,{stage:localTestBoss==='moth'?4:5,souls:18,coins:0,lanterns:5,rescued:17,lost:0,choices:[],leftLights:0});updateHud();
+    hide(UI.title);Object.assign(S,{stage:['moth','farewell'].includes(localTestBoss)?4:6,souls:18,coins:0,lanterns:5,rescued:17,lost:0,choices:[],leftLights:0});updateHud();
     if(localTestBoss==='headless'){setHud(true);startHeadless();}
     else if(localTestBoss==='moth'){S.mode='explore';startMothBoss();}
+    else if(localTestBoss==='farewell'){S.mode='mothBoss';lightFarewell();}
     else if(localTestBoss==='judgment'){startJudgment();}
     else finishGame();
   },0);
-}else if(localTesting&&localTestStage>=1&&localTestStage<=5){
+}else if(localTesting&&localTestStage>=1&&localTestStage<=6){
   setTimeout(()=>{
     hide(UI.title);setHud(true);
     Object.assign(S,{souls:12,coins:6,lanterns:2,rescued:11,lost:0,choices:[],leftLights:0,checkpoint:localTestStage});
