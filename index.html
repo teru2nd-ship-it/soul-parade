@@ -10,11 +10,11 @@
     --night:#090912;--deep:#15152b;--ink:#20203a;--soul:#dcecff;--flame:#8fe3cf;
     --higan:#d43a4f;--torii:#c8452c;--moon:#e8c56a;--wisp:#9b6bf2;--danger:#ef685d;
   }
-  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;letter-spacing:0}
-  html,body{width:100%;height:100%;overflow:hidden;background:var(--night);touch-action:none}
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;letter-spacing:0;touch-action:none;-webkit-user-select:none;user-select:none}
+  html,body{width:100%;height:100%;overflow:hidden;background:var(--night);touch-action:none;overscroll-behavior:none;-webkit-text-size-adjust:100%;text-size-adjust:100%}
   body{font-family:"Hiragino Mincho ProN","Yu Mincho","Noto Serif JP",serif;color:var(--soul)}
-  button{font:inherit}
-  #game{display:block;width:100vw;height:100dvh;background:var(--night)}
+  button{font:inherit;touch-action:none}
+  #game{display:block;width:100vw;height:100dvh;background:var(--night);touch-action:none}
   .hidden{display:none!important}
   .screen{position:fixed;inset:0;z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;background:rgba(5,5,14,.82)}
   .screen::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(3,3,9,.08),rgba(3,3,9,.84));z-index:-1}
@@ -41,16 +41,26 @@
   #modal .chapter{font-size:11px;letter-spacing:4px;color:var(--higan);margin-bottom:10px}
   #modal h2,.trial h2{font-size:25px;line-height:1.25;color:var(--moon);margin-bottom:14px}
   #modal p{font-size:14px;line-height:1.95;max-width:350px;color:rgba(236,244,255,.84)}
+  .gatekeeper-reveal{display:flex;align-items:center;justify-content:center;gap:12px;margin:0 auto 8px}
+  .gatekeeper-reveal .gatekeeper-art{width:min(43vw,176px);max-height:31vh;object-fit:contain;image-rendering:pixelated;filter:drop-shadow(0 0 18px rgba(143,227,207,.35))}
+  .gatekeeper-reveal .pass-art{width:min(19vw,78px);max-height:18vh;object-fit:contain;image-rendering:pixelated;filter:drop-shadow(0 0 12px rgba(232,197,106,.4))}
   #modalActions{display:flex;flex-direction:column;align-items:center;width:100%;max-width:340px}
   .trial{z-index:45;background:rgba(5,5,14,.95);justify-content:flex-start;padding-top:max(72px,calc(env(safe-area-inset-top) + 58px));overflow:auto}
   .trial .rule{font-size:13px;line-height:1.75;max-width:340px;color:rgba(236,244,255,.8);margin-bottom:20px}
   #numberOptions{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;max-width:340px}
-  .num-btn{width:66px;height:72px;border:0;border-radius:50% 50% 44% 44%;font-size:24px;font-weight:700;color:#111126;background:radial-gradient(circle at 50% 32%,#dacaff,var(--wisp));box-shadow:0 0 16px rgba(155,107,242,.42)}
-  .num-btn.selected{background:radial-gradient(circle at 50% 32%,#d8fff5,var(--flame));box-shadow:0 0 22px rgba(143,227,207,.78)}
+  .num-btn{position:relative;isolation:isolate;width:70px;height:82px;border:0;border-radius:0;font-size:24px;font-weight:900;color:#fff;background:transparent;text-shadow:0 2px 4px #071015,0 0 8px #071015;filter:drop-shadow(0 0 10px rgba(57,247,182,.32))}
+  .num-btn::before{content:"";position:absolute;z-index:-1;inset:-4px;background:url("assets/hazards/oni-wisp-nanobanana2.webp") center/contain no-repeat;image-rendering:pixelated;opacity:.8}
+  .num-btn.selected{color:#fff6bd;filter:drop-shadow(0 0 15px rgba(232,197,106,.82));transform:translateY(-3px)}
+  .num-btn.selected::before{opacity:1}
   #trialStatus{min-height:52px;margin-top:16px;font-size:15px;line-height:1.6;color:var(--soul)}
-  #pinCanvas{width:min(82vw,320px);height:min(54vh,430px);border:1px solid rgba(220,236,255,.18);background:rgba(20,20,48,.72)}
+  #pinTrial{background:radial-gradient(circle at 50% 44%,rgba(24,38,72,.58),rgba(5,5,14,.96) 72%)}
+  #pinTrial .rule{margin-bottom:12px}
+  #pinCanvas{width:min(88vw,340px);height:auto;aspect-ratio:320/430;border:2px solid rgba(143,227,207,.28);border-radius:8px;background:#11162e;box-shadow:0 0 30px rgba(68,141,212,.22),0 14px 32px rgba(0,0,0,.5);image-rendering:pixelated}
+  #pinStatus{min-height:36px;margin-top:10px!important;color:var(--moon);letter-spacing:2px;font-weight:700}
   #pantheonTrial{background:linear-gradient(180deg,rgba(5,5,14,.76),rgba(20,12,35,.88));overflow:hidden}
-  #pantheonDisplay{width:min(92%,360px);min-height:86px;margin:2px 0 16px;padding:14px;border:1px solid rgba(232,197,106,.38);background:rgba(9,9,18,.66);display:flex;align-items:center;justify-content:center;color:var(--moon);font-size:17px;line-height:1.65}
+  #pantheonDisplay{width:min(92%,360px);min-height:86px;margin:2px 0 16px;padding:10px 14px;border:1px solid rgba(232,197,106,.38);background:rgba(9,9,18,.66);display:grid;grid-template-columns:82px 1fr;gap:12px;align-items:center;color:var(--moon);font-size:17px;line-height:1.45}
+  #pantheonProp{width:78px;height:72px;object-fit:contain;image-rendering:pixelated;filter:drop-shadow(0 0 10px rgba(232,197,106,.28))}
+  #pantheonPrompt{display:block}
   #pantheonChoices{display:grid;grid-template-columns:repeat(2,minmax(0,150px));gap:10px;width:min(92%,320px)}
   .pantheon-btn{height:70px;border:1px solid rgba(220,236,255,.3);background:rgba(21,21,43,.86);color:var(--soul);font:inherit;font-size:13px;line-height:1.35;cursor:pointer}
   .pantheon-btn strong{display:block;color:var(--moon);font-size:22px;font-weight:500;margin-bottom:2px}
@@ -73,7 +83,8 @@
   @media (max-width:340px){h1{font-size:39px}.title-copy{font-size:12px}.trial{padding-left:14px;padding-right:14px}#formationBar{grid-template-columns:repeat(3,66px)}}
   @media (orientation:portrait) and (max-height:620px){
     .trial{padding-top:28px;padding-bottom:18px}.trial .eyebrow{margin-bottom:6px}.trial h2{font-size:21px;margin-bottom:8px}.trial .rule{font-size:12px;line-height:1.5;margin-bottom:9px}
-    #pantheonDisplay{min-height:58px;padding:7px;margin-bottom:8px;font-size:15px}#pantheonChoices{gap:6px}.pantheon-btn{height:56px}#pantheonStatus{min-height:28px;margin-top:7px}
+    #pantheonDisplay{min-height:58px;grid-template-columns:58px 1fr;gap:8px;padding:6px 8px;margin-bottom:8px;font-size:14px}#pantheonProp{width:54px;height:48px}#pantheonChoices{gap:6px}.pantheon-btn{height:56px}#pantheonStatus{min-height:28px;margin-top:7px}
+    .gatekeeper-reveal .gatekeeper-art{max-height:25vh}.gatekeeper-reveal .pass-art{max-height:14vh}
     #pantheonTrial .primary,#pantheonTrial .secondary{min-height:40px;margin-top:7px;padding:7px 20px}
   }
 </style>
@@ -122,7 +133,7 @@
 <section id="pinTrial" class="screen trial hidden">
   <div class="eyebrow">STAGE 3 — 忘却の川</div>
   <h2 id="pinTitle">業火の檻</h2>
-  <p id="pinRule" class="rule">閂を抜く順番を見極め、清めの水で業火を鎮めよ。</p>
+  <p id="pinRule" class="rule">リングの付いたピンを順に抜き、清めの水で魂への道を開け。</p>
   <canvas id="pinCanvas" width="320" height="430"></canvas>
   <div id="pinStatus" class="rule"></div>
 </section>
@@ -131,7 +142,7 @@
   <div class="eyebrow">STAGE 5 — 万神冥界市</div>
   <h2 id="pantheonTitle">冥界の通行印</h2>
   <p id="pantheonRule" class="rule"></p>
-  <div id="pantheonDisplay"></div>
+  <div id="pantheonDisplay"><img id="pantheonProp" alt=""><span id="pantheonPrompt"></span></div>
   <div id="pantheonChoices"></div>
   <div id="pantheonStatus"></div>
   <button id="pantheonConfirm" class="primary">決定</button>
@@ -148,7 +159,7 @@
 
 <section id="ending" class="screen hidden">
   <div class="eyebrow">THE JOURNEY CONTINUES</div>
-  <h2>光の門へ</h2>
+  <h2 id="endingTitle">光の門へ</h2>
   <div id="endingRank"></div>
   <p id="endingText"></p>
   <button id="againBtn" class="primary">もう一度導く</button>
@@ -177,11 +188,11 @@ const UI={
   numberOptions:document.getElementById('numberOptions'),trialStatus:document.getElementById('trialStatus'),numberConfirm:document.getElementById('numberConfirm'),
   pin:document.getElementById('pinTrial'),pinCanvas:document.getElementById('pinCanvas'),pinStatus:document.getElementById('pinStatus'),
   pantheon:document.getElementById('pantheonTrial'),pantheonTitle:document.getElementById('pantheonTitle'),pantheonRule:document.getElementById('pantheonRule'),
-  pantheonDisplay:document.getElementById('pantheonDisplay'),pantheonChoices:document.getElementById('pantheonChoices'),pantheonStatus:document.getElementById('pantheonStatus'),
+  pantheonDisplay:document.getElementById('pantheonDisplay'),pantheonProp:document.getElementById('pantheonProp'),pantheonPrompt:document.getElementById('pantheonPrompt'),pantheonChoices:document.getElementById('pantheonChoices'),pantheonStatus:document.getElementById('pantheonStatus'),
   pantheonConfirm:document.getElementById('pantheonConfirm'),pantheonReplay:document.getElementById('pantheonReplay'),
   judgment:document.getElementById('judgment'),judgmentTitle:document.getElementById('judgmentTitle'),
   judgmentRule:document.getElementById('judgmentRule'),judgmentChoices:document.getElementById('judgmentChoices'),
-  ending:document.getElementById('ending'),endingRank:document.getElementById('endingRank'),endingText:document.getElementById('endingText'),
+  ending:document.getElementById('ending'),endingTitle:document.getElementById('endingTitle'),endingRank:document.getElementById('endingRank'),endingText:document.getElementById('endingText'),
   bee:document.getElementById('beeCameo')
 };
 
@@ -190,11 +201,23 @@ function loadImage(key,src){const img=new Image();img.src=src;IMG[key]=img;}
 loadImage('cemetery','assets/backgrounds/twilight-cemetery.webp');
 loadImage('river','assets/backgrounds/forgotten-river.webp');
 loadImage('underworld','assets/backgrounds/starless-underworld.webp');
-loadImage('soulEater','assets/bosses/soul-eater.webp');
-loadImage('headless','assets/bosses/headless-warrior.png');
-loadImage('reaper','assets/bosses/reaper.webp');
-loadImage('enma','assets/bosses/enma.webp');
-loadImage('bird','assets/bosses/spirit-bird.webp');
+loadImage('pantheon','assets/backgrounds/pantheon-underworld-market.webp');
+loadImage('tower','assets/backgrounds/reincarnation-tower.webp');
+loadImage('soulEater','assets/bosses/soul-eater-nanobanana2.webp');
+loadImage('moth','assets/bosses/underworld-moth.webp');
+loadImage('headless','assets/bosses/headless-warrior-nanobanana2.webp');
+loadImage('reaper','assets/bosses/reaper-nanobanana2.webp');
+loadImage('enma','assets/bosses/enma-nanobanana2.webp');
+loadImage('bird','assets/bosses/spirit-bird-nanobanana2.webp');
+loadImage('guideSoul','assets/characters/guide-soul-nanobanana2.webp');
+loadImage('torii','assets/props/torii-gate-nanobanana2.webp');
+loadImage('oniWisp','assets/hazards/oni-wisp-nanobanana2.webp');
+loadImage('paperLantern','assets/props/paper-lantern-mob.webp');
+loadImage('stoneLantern','assets/props/stone-lantern-mob.webp');
+loadImage('littleSoul','assets/characters/little-soul-teru-v2.webp');
+loadImage('pinTower','assets/backgrounds/pin-puzzle-tower.webp');
+loadImage('towerRock','assets/hazards/tower-rune-boulder.webp');
+loadImage('counterweight','assets/props/underworld-counterweight.webp');
 
 const STAGE_NAMES=['','黄昏の墓場','鬼火の森','忘却の川','星のない冥界','万神冥界市','輪廻の塔'];
 const ACCESSORIES=['hat','ribbon','ears','beard','leaf','none'];
@@ -204,7 +227,7 @@ const S={
   formation:'line',leader:{x:0,y:0,tx:0,ty:0},trail:[],followers:[],pickups:[],hazards:[],lanternObjs:[],
   echoes:[],parts:[],exit:null,worldReady:false,damageCooldown:0,checkpoint:1,
   numberRound:0,numberSelection:[],pinRound:0,pantheonRound:0,pantheonSelection:[],pantheonStep:0,pantheonLocked:false,
-  boss:null,tower:null,choices:[],leftLights:0,ending:false
+  boss:null,tower:null,choices:[],leftLights:0,ending:false,endingTier:'guide'
 };
 
 function resize(){
@@ -214,6 +237,10 @@ function resize(){
   if(!S.worldReady){WORLD_H=H*2.7;}
 }
 addEventListener('resize',resize);resize();
+const stopBrowserZoom=e=>e.preventDefault();
+['gesturestart','gesturechange','gestureend','dblclick'].forEach(type=>document.addEventListener(type,stopBrowserZoom,{passive:false}));
+document.addEventListener('touchstart',e=>{if(e.touches.length>1)e.preventDefault();},{passive:false});
+document.addEventListener('touchmove',e=>{if(e.touches.length>1)e.preventDefault();},{passive:false});
 function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
 function rnd(a,b){return a+Math.random()*(b-a);}
 function dist2(a,b){const x=a.x-b.x,y=a.y-b.y;return x*x+y*y;}
@@ -222,7 +249,7 @@ function hide(el){el.classList.add('hidden');}
 function makeSoul(i=0){return{acc:ACCESSORIES[i%ACCESSORIES.length],hue:185+(i*23)%74,phase:rnd(0,Math.PI*2)};}
 function safeStorageGet(){try{return JSON.parse(localStorage.getItem(SAVE_KEY)||'null');}catch{return null;}}
 function saveCheckpoint(){
-  try{localStorage.setItem(SAVE_KEY,JSON.stringify({stage:S.checkpoint,souls:S.souls,coins:S.coins,lanterns:S.lanterns,rescued:S.rescued,choices:S.choices,leftLights:S.leftLights}));}catch{}
+  try{localStorage.setItem(SAVE_KEY,JSON.stringify({stage:S.checkpoint,souls:S.souls,coins:S.coins,lanterns:S.lanterns,rescued:S.rescued,lost:S.lost,choices:S.choices,leftLights:S.leftLights}));}catch{}
   UI.cont.classList.remove('hidden');
 }
 function clearSave(){try{localStorage.removeItem(SAVE_KEY);}catch{}UI.cont.classList.add('hidden');}
@@ -254,7 +281,7 @@ function newGame(){
 }
 function continueGame(){
   const data=safeStorageGet();if(!data){newGame();return;}
-  Object.assign(S,{souls:data.souls||1,coins:data.coins||0,lanterns:data.lanterns||0,rescued:data.rescued||0,choices:data.choices||[],leftLights:data.leftLights||0,checkpoint:data.stage||1});
+  Object.assign(S,{souls:data.souls||1,coins:data.coins||0,lanterns:data.lanterns||0,rescued:data.rescued||0,lost:data.lost||0,choices:data.choices||[],leftLights:data.leftLights||0,checkpoint:data.stage||1});
   hide(UI.title);setHud(true);beginStage(S.checkpoint,true);
 }
 UI.start.onclick=newGame;UI.cont.onclick=continueGame;
@@ -287,19 +314,19 @@ function setupExplore(stage){
   S.mode='explore';S.worldReady=true;WORLD_H=stage===4?H*3.05:H*2.65;
   S.cam=WORLD_H-H;S.parts=[];S.pickups=[];S.hazards=[];S.lanternObjs=[];S.echoes=[];
   const spawn={x:W*.5,y:WORLD_H-H*.18};Object.assign(S.leader,{x:spawn.x,y:spawn.y,tx:spawn.x,ty:spawn.y});
-  S.trail=Array.from({length:420},()=>({x:spawn.x,y:spawn.y}));S.followers=Array.from({length:Math.min(S.souls-1,50)},(_,i)=>makeSoul(i+1));
+  S.trail=Array.from({length:420},()=>({x:spawn.x,y:spawn.y}));S.followers=Array.from({length:Math.min(S.souls-1,50)},(_,i)=>({...makeSoul(i+1),kind:'littleSoul'}));
   S.exit={x:W*.5,y:H*.26,r:58};
   if(stage===1){
     const pts=[[.22,.82],[.76,.74],[.32,.61],[.68,.52],[.18,.39],[.82,.31],[.5,.2]];
-    pts.forEach((p,i)=>S.pickups.push({x:W*p[0],y:WORLD_H*p[1],s:makeSoul(S.rescued+i+1),got:false}));
-    [[.68,.69],[.28,.45]].forEach(p=>S.lanternObjs.push({x:W*p[0],y:WORLD_H*p[1],lit:false}));
-    for(let i=0;i<12;i++)S.hazards.push({x:rnd(W*.14,W*.86),y:rnd(H*.55,WORLD_H-H*.35),r:rnd(13,20),phase:rnd(0,7),kind:'wisp'});
+    pts.forEach((p,i)=>{const soul={...makeSoul(S.rescued+i+1),kind:'littleSoul'};S.pickups.push({x:W*p[0],y:WORLD_H*p[1],s:soul,got:false});});
+    [[.68,.69,'paper'],[.28,.45,'stone']].forEach(p=>S.lanternObjs.push({x:W*p[0],y:WORLD_H*p[1],lit:false,variant:p[2]}));
+    for(let i=0;i<7;i++)S.hazards.push({x:rnd(W*.14,W*.86),y:rnd(H*.55,WORLD_H-H*.35),r:rnd(13,20),phase:rnd(0,7),kind:'oniWisp'});
   }else{
     const pts=[[.18,.86],[.8,.78],[.32,.69],[.68,.59],[.18,.48],[.78,.39],[.36,.3],[.68,.2]];
-    pts.forEach((p,i)=>S.pickups.push({x:W*p[0],y:WORLD_H*p[1],s:makeSoul(S.rescued+i+1),got:false,hidden:true}));
-    [[.2,.77],[.76,.56],[.32,.33]].forEach((p,i)=>S.lanternObjs.push({x:W*p[0],y:WORLD_H*p[1],lit:false,order:i}));
+    pts.forEach((p,i)=>{const soul={...makeSoul(S.rescued+i+1),kind:'littleSoul'};S.pickups.push({x:W*p[0],y:WORLD_H*p[1],s:soul,got:false,hidden:true});});
+    [[.2,.77,'stone'],[.76,.56,'paper'],[.32,.33,'stone']].forEach((p,i)=>S.lanternObjs.push({x:W*p[0],y:WORLD_H*p[1],lit:false,order:i,variant:p[2]}));
     [[.74,.72],[.28,.52],[.72,.27]].forEach((p,i)=>S.echoes.push({x:W*p[0],y:WORLD_H*p[1],order:i,heard:false,phase:rnd(0,6)}));
-    for(let i=0;i<16;i++)S.hazards.push({x:rnd(W*.1,W*.9),y:rnd(H*.5,WORLD_H-H*.25),r:rnd(16,25),phase:rnd(0,7),kind:'moth'});
+    for(let i=0;i<8;i++)S.hazards.push({x:rnd(W*.1,W*.9),y:rnd(H*.5,WORLD_H-H*.25),r:rnd(16,25),phase:rnd(0,7),kind:'moth'});
   }
   updateHud();
 }
@@ -308,10 +335,11 @@ let dragging=false;
 function pointer(e){const p=e.touches?e.touches[0]:e;return{x:p.clientX,y:p.clientY};}
 function pointerWorld(e){const p=pointer(e);return{x:p.x,y:p.y+S.cam};}
 cv.addEventListener('pointerdown',e=>{
+  e.preventDefault();
   if(['explore','tower','reaper'].includes(S.mode)){dragging=true;const p=S.mode==='explore'?pointerWorld(e):pointer(e);S.leader.tx=p.x;S.leader.ty=S.mode==='explore'?p.y:clamp(p.y,H*.18,H*.84);}
   else if(S.mode==='soulBoss')tapSoulBoss(pointer(e));
   else if(S.mode==='mothBoss')tapMothBoss(pointer(e));
-});
+},{passive:false});
 cv.addEventListener('pointermove',e=>{if(!dragging)return;e.preventDefault();const p=S.mode==='explore'?pointerWorld(e):pointer(e);S.leader.tx=p.x;S.leader.ty=S.mode==='explore'?p.y:clamp(p.y,H*.18,H*.84);},{passive:false});
 addEventListener('pointerup',()=>dragging=false);
 
@@ -364,25 +392,55 @@ UI.numberConfirm.onclick=()=>{
 
 const pinCtx=UI.pinCanvas.getContext('2d');
 const PIN_LEVELS=[
-  {title:'業火の檻',pins:['water','soul'],sequence:[0,1]},
-  {title:'地獄の業火分岐',pins:['rock','water','soul'],sequence:[1,0,2]},
-  {title:'清めの水位',pins:['water','weight','soul'],sequence:[0,1,2]}
+  {title:'業火の檻',rule:'上の清めの水を業火へ落とし、魂の出口を開け。',pins:['water','soul'],sequence:[0,1],hazard:'fire'},
+  {title:'地獄の業火分岐',rule:'水で受け止めてから、落石と魂を順に通せ。',pins:['rock','water','soul'],sequence:[1,0,2],hazard:'fire'},
+  {title:'清めの水位',rule:'水位を上げ、重りで最後の水門を開け。',pins:['water','weight','soul'],sequence:[0,1,2],hazard:'flood'}
 ];
 let pinState={pulled:[],failed:false};
 function startPinTrial(){closeModal();if(S.coins<6){toast('渡し賃が足りない');beginStage(2);return;}S.coins-=6;updateHud();S.pinRound=0;show(UI.pin);S.mode='pin';startPinLevel();}
-function startPinLevel(){pinState={pulled:[],failed:false};document.getElementById('pinTitle').textContent=PIN_LEVELS[S.pinRound].title;UI.pinStatus.textContent=`閂 0 / ${PIN_LEVELS[S.pinRound].pins.length}`;drawPin();}
+function startPinLevel(){const level=PIN_LEVELS[S.pinRound];pinState={pulled:[],pullTimes:{},failed:false,failedAt:0,completedAt:0};document.getElementById('pinTitle').textContent=level.title;document.getElementById('pinRule').textContent=level.rule;UI.pinStatus.textContent=`PIN 0 / ${level.pins.length}`;drawPin();}
+function pinRows(level){return level.pins.length===2?[166,346]:[166,256,346];}
 UI.pinCanvas.addEventListener('pointerdown',e=>{
-  if(S.mode!=='pin'||pinState.failed)return;const r=UI.pinCanvas.getBoundingClientRect(),y=(e.clientY-r.top)*(430/r.height);
-  const level=PIN_LEVELS[S.pinRound],slot=Math.floor((y-70)/100);if(slot<0||slot>=level.pins.length||pinState.pulled.includes(slot))return;
-  const expected=level.sequence[pinState.pulled.length];if(slot!==expected){pinState.failed=true;UI.pinStatus.textContent='業火が逆流した ─ すぐにやり直す';drawPin();setTimeout(startPinLevel,900);return;}
-  pinState.pulled.push(slot);UI.pinStatus.textContent=`閂 ${pinState.pulled.length} / ${level.pins.length}`;drawPin();
-  if(pinState.pulled.length===level.pins.length){S.souls+=2;S.rescued+=2;updateHud();setTimeout(()=>{S.pinRound++;if(S.pinRound<PIN_LEVELS.length){toast('檻が開いた ─ 次の水路へ');startPinLevel();}else{hide(UI.pin);startSoulEater();}},650);}
-});
+  e.preventDefault();
+  if(S.mode!=='pin'||pinState.failed||pinState.completedAt)return;const r=UI.pinCanvas.getBoundingClientRect(),x=(e.clientX-r.left)*(320/r.width),y=(e.clientY-r.top)*(430/r.height);
+  const level=PIN_LEVELS[S.pinRound],rows=pinRows(level),slot=rows.findIndex(py=>Math.abs(y-py)<34);if(slot<0||pinState.pulled.includes(slot)||x<8||x>312)return;
+  const expected=level.sequence[pinState.pulled.length];if(slot!==expected){pinState.failed=true;pinState.failedAt=performance.now();UI.pinStatus.textContent='業火が逆流した';drawPin();setTimeout(startPinLevel,1100);return;}
+  pinState.pulled.push(slot);pinState.pullTimes[slot]=performance.now();UI.pinStatus.textContent=`PIN ${pinState.pulled.length} / ${level.pins.length}`;drawPin();
+  if(pinState.pulled.length===level.pins.length){pinState.completedAt=performance.now();S.souls+=2;S.rescued+=2;updateHud();setTimeout(()=>{S.pinRound++;if(S.pinRound<PIN_LEVELS.length){toast('水路がつながった ─ 次の檻へ');startPinLevel();}else{hide(UI.pin);startSoulEater();}},1050);}
+},{passive:false});
+function pinEase(ms,duration=420){const t=clamp(ms/duration,0,1);return 1-(1-t)*(1-t)*(1-t);}
+function drawPinWater(c,x,y,w,h,flow=0){
+  c.save();const glow=c.createLinearGradient(0,y,0,y+h);glow.addColorStop(0,'rgba(171,238,255,.94)');glow.addColorStop(1,'rgba(48,147,231,.88)');c.fillStyle=glow;c.shadowColor='rgba(69,208,255,.72)';c.shadowBlur=12;c.beginPath();c.moveTo(x,y+7);for(let px=0;px<=w;px+=12)c.lineTo(x+px,y+7+Math.sin(S.time*5+px*.09)*4);c.lineTo(x+w,y+h);c.lineTo(x,y+h);c.closePath();c.fill();c.shadowBlur=0;
+  c.fillStyle='rgba(225,252,255,.72)';for(let i=0;i<5;i++){const bx=x+18+i*(w-36)/4,by=y+18+Math.sin(S.time*3+i)*8;c.beginPath();c.arc(bx,by,2+(i%2),0,Math.PI*2);c.fill();}
+  if(flow>0){c.fillStyle='rgba(95,205,255,.8)';c.fillRect(x+w*.42,y+h-2,w*.16,58*flow);}
+  c.restore();
+}
+function drawPinFire(c,x,y,w,h,quenched=false){
+  c.save();if(quenched){c.fillStyle='rgba(85,185,225,.34)';c.fillRect(x,y+h-12,w,12);c.strokeStyle='rgba(220,245,255,.55)';c.lineWidth=3;for(let i=0;i<4;i++){const sx=x+25+i*34;c.beginPath();c.moveTo(sx,y+h-12);c.bezierCurveTo(sx-8,y+h-35,sx+12,y+h-44,sx+2,y+h-64);c.stroke();}c.restore();return;}
+  const g=c.createLinearGradient(0,y,0,y+h);g.addColorStop(0,'#ffe66f');g.addColorStop(.48,'#ff783f');g.addColorStop(1,'#c52d55');c.fillStyle=g;c.shadowColor='#ff593d';c.shadowBlur=18;c.beginPath();c.moveTo(x,y+h);for(let px=0;px<=w;px+=12){const flame=18+Math.abs(Math.sin(S.time*8+px*.18))*24;c.lineTo(x+px,y+h-flame);}c.lineTo(x+w,y+h);c.closePath();c.fill();c.restore();
+}
+function drawPinPayload(c,kind,x,y,p){
+  const drop=72*p;
+  if(kind==='water'){drawPinWater(c,x-66,y-35+drop,132,54,Math.min(1,p*1.5));return;}
+  if(kind==='rock'){if(imageReady(IMG.towerRock)){c.save();c.shadowColor='rgba(80,224,255,.45)';c.shadowBlur=12;c.imageSmoothingEnabled=false;c.drawImage(IMG.towerRock,x-43,y-43+drop,86,86);c.restore();}else{c.save();c.translate(x,y+drop);c.fillStyle='#73778d';c.beginPath();c.moveTo(-34,22);c.lineTo(-18,-31);c.lineTo(28,-24);c.lineTo(38,23);c.closePath();c.fill();c.restore();}return;}
+  if(kind==='weight'){if(imageReady(IMG.counterweight)){c.save();c.shadowColor='rgba(232,197,106,.45)';c.shadowBlur=12;c.imageSmoothingEnabled=false;c.drawImage(IMG.counterweight,x-39,y-45+drop,78,78);c.restore();}else{c.save();c.translate(x,y+drop);c.fillStyle='#6f5a45';c.beginPath();c.moveTo(-30,23);c.lineTo(-22,-18);c.quadraticCurveTo(0,-42,22,-18);c.lineTo(30,23);c.closePath();c.fill();c.restore();}return;}
+  if(kind==='soul'){const bob=Math.sin(S.time*4)*3;if(imageReady(IMG.littleSoul)){const h=66,w=h*.615;c.save();c.globalAlpha=1-p*.35;c.shadowColor='rgba(143,227,207,.75)';c.shadowBlur=14;c.imageSmoothingEnabled=false;c.drawImage(IMG.littleSoul,x-w/2,y-h*.52+bob+drop,w,h);c.restore();}else{c.fillStyle='#dcecff';c.beginPath();c.arc(x,y+bob+drop,19,0,Math.PI*2);c.fill();}}
+}
+function drawPullPin(c,y,i,p,expected){
+  const fromLeft=i%2===0,dir=fromLeft?-1:1,shift=dir*285*p,ringX=(fromLeft?26:294)+shift;c.save();c.translate(shift,0);c.shadowColor=expected?'rgba(232,197,106,.62)':'rgba(0,0,0,.45)';c.shadowBlur=expected?8:4;c.lineCap='round';c.strokeStyle='#1a1723';c.lineWidth=13;c.beginPath();c.moveTo(27,y);c.lineTo(293,y);c.stroke();c.strokeStyle='#c8933f';c.lineWidth=7;c.beginPath();c.moveTo(28,y);c.lineTo(292,y);c.stroke();c.strokeStyle='#ffe08a';c.lineWidth=2;c.beginPath();c.moveTo(31,y-2);c.lineTo(289,y-2);c.stroke();c.restore();
+  c.save();c.translate(ringX,y);c.fillStyle='#151424';c.strokeStyle='#e8c56a';c.lineWidth=6;c.beginPath();c.arc(0,0,15,0,Math.PI*2);c.fill();c.stroke();c.fillStyle=expected?'#8fe3cf':'#4a4053';c.beginPath();c.arc(0,0,5,0,Math.PI*2);c.fill();c.restore();
+}
 function drawPin(){
-  const c=pinCtx,level=PIN_LEVELS[S.pinRound];c.clearRect(0,0,320,430);c.fillStyle='#161631';c.fillRect(42,12,236,406);c.strokeStyle='rgba(220,236,255,.22)';c.strokeRect(42,12,236,406);
-  level.pins.forEach((kind,i)=>{const y=86+i*100,pulled=pinState.pulled.includes(i);c.fillStyle=kind==='water'?'rgba(108,185,245,.76)':kind==='rock'?'#696477':kind==='weight'?'#87765a':'rgba(212,58,79,.64)';c.fillRect(56,y-55,208,68);c.fillStyle='#edf4ff';c.font='15px serif';c.textAlign='center';c.fillText({water:'清めの水',rock:'落石',weight:'重り',soul:'魂の出口'}[kind],160,y-18);
-    c.fillStyle=pulled?'rgba(80,80,100,.25)':'#e8c56a';c.fillRect(pulled?254:28,y+15,pulled?30:264,15);c.fillStyle='#15152b';c.font='11px serif';c.fillText(pulled?'解除':'ここをタップ',160,y+27);});
-  c.fillStyle=pinState.failed?'#ef685d':'#dcecff';c.beginPath();c.arc(160,382,22,0,Math.PI*2);c.fill();c.fillStyle='#15152b';c.beginPath();c.arc(153,379,2.5,0,Math.PI*2);c.arc(167,379,2.5,0,Math.PI*2);c.fill();
+  const c=pinCtx,level=PIN_LEVELS[S.pinRound],rows=pinRows(level),now=performance.now();c.clearRect(0,0,320,430);
+  if(imageReady(IMG.pinTower)){c.drawImage(IMG.pinTower,0,0,320,430);}else{const g=c.createLinearGradient(0,0,0,430);g.addColorStop(0,'#20254b');g.addColorStop(1,'#071c2b');c.fillStyle=g;c.fillRect(0,0,320,430);}
+  c.fillStyle='rgba(2,6,20,.14)';c.fillRect(0,0,320,430);
+  const centers=level.pins.length===2?[122,296]:[122,211,300];
+  level.pins.forEach((kind,i)=>{const p=pinState.pullTimes[i]?pinEase(now-pinState.pullTimes[i]):0;drawPinPayload(c,kind,160,centers[i],p);});
+  const waterIndex=level.pins.indexOf('water'),waterReleased=waterIndex>=0&&pinState.pulled.includes(waterIndex);if(level.hazard==='fire')drawPinFire(c,96,level.pins.length===2?191:276,128,58,waterReleased);
+  if(level.hazard==='flood'&&waterReleased){const p=pinEase(now-pinState.pullTimes[waterIndex],700);c.fillStyle=`rgba(67,168,222,${.18+.3*p})`;c.fillRect(72,316-58*p,176,58+58*p);}
+  rows.forEach((y,i)=>{const p=pinState.pullTimes[i]?pinEase(now-pinState.pullTimes[i]):0,expected=!pinState.failed&&!pinState.completedAt&&level.sequence[pinState.pulled.length]===i;drawPullPin(c,y,i,p,expected);});
+  if(pinState.completedAt){const p=pinEase(now-pinState.completedAt,700),glow=c.createRadialGradient(160,385,2,160,385,75*p);glow.addColorStop(0,`rgba(220,255,245,${.75*(1-p)})`);glow.addColorStop(1,'rgba(143,227,207,0)');c.fillStyle=glow;c.fillRect(70,315,180,112);}
+  if(pinState.failed){const p=.38+.22*Math.sin((now-pinState.failedAt)*.018);c.fillStyle=`rgba(239,104,93,${p})`;c.fillRect(0,0,320,430);drawPinFire(c,55,345,210,80,false);}
 }
 
 function startSoulEater(){
@@ -416,19 +474,19 @@ const PANTHEON_TRIALS=[
   {
     kind:'balance',title:'羽根と記憶の天秤',
     rule:'左皿の羽根は重さ <b>九</b>。右皿へ記憶を載せ、同じ重さにせよ。',
-    display:'羽根　九　＝　記憶　？',
+    display:'羽根　九　＝　記憶　？',asset:'assets/props/memory-balance.webp',assetAlt:'羽根と記憶の天秤',
     options:[['鈴','二',2],['貝殻','三',3],['仮面','四',4],['小舟','五',5]]
   },
   {
     kind:'echo',title:'輪廻の太鼓',
     rule:'四方の太鼓が光る。<b>同じ順番</b>で五回たたけ。',
-    display:'東・西・天・地の音を聞く',
+    display:'東・西・天・地の音を聞く',asset:'assets/props/reincarnation-drum.webp',assetAlt:'輪廻の太鼓',
     options:[['東','壱'],['西','弐'],['天','参'],['地','肆']],sequence:[0,2,1,3,2]
   },
   {
     kind:'route',title:'冥界乗換印',
     rule:'通行札に描かれた順で印を押せ。<br><b>蓮華 → 鳥居 → 舟 → 星門</b>',
-    display:'四つの冥界を、迷わず乗り継ぐ',
+    display:'四つの冥界を、迷わず乗り継ぐ',asset:'assets/props/transit-token-torii.webp',assetAlt:'冥界乗換印',
     options:[['鳥居','門'],['冥府の舟','舟'],['蓮華','蓮'],['星の門','星']],sequence:[2,0,1,3]
   }
 ];
@@ -438,7 +496,7 @@ function startPantheonTrials(){
 }
 function renderPantheonTrial(){
   const q=PANTHEON_TRIALS[S.pantheonRound];pantheonDemoToken++;S.pantheonSelection=[];S.pantheonStep=0;S.pantheonLocked=false;
-  UI.pantheonTitle.textContent=q.title;UI.pantheonRule.innerHTML=q.rule;UI.pantheonDisplay.textContent=q.display;UI.pantheonChoices.innerHTML='';UI.pantheonStatus.textContent=`通行印 ${S.pantheonRound} / ${PANTHEON_TRIALS.length}`;
+  UI.pantheonTitle.textContent=q.title;UI.pantheonRule.innerHTML=q.rule;UI.pantheonProp.src=q.asset;UI.pantheonProp.alt=q.assetAlt;UI.pantheonPrompt.textContent=q.display;UI.pantheonChoices.innerHTML='';UI.pantheonStatus.textContent=`通行印 ${S.pantheonRound} / ${PANTHEON_TRIALS.length}`;
   UI.pantheonConfirm.classList.toggle('hidden',q.kind!=='balance');UI.pantheonReplay.classList.toggle('hidden',q.kind!=='echo');
   q.options.forEach((opt,i)=>{const b=document.createElement('button');b.className='pantheon-btn';b.innerHTML=`<strong>${opt[1]}</strong>${opt[0]}`;b.onclick=()=>handlePantheonChoice(i,b);UI.pantheonChoices.appendChild(b);});
   if(q.kind==='echo')setTimeout(playPantheonEcho,550);
@@ -471,7 +529,7 @@ UI.pantheonConfirm.onclick=()=>{
 function completePantheonRound(){
   const q=PANTHEON_TRIALS[S.pantheonRound],reward=[2,3,2][S.pantheonRound];pantheonDemoToken++;S.souls+=reward;S.rescued+=reward;S.coins++;S.choices.push(`pantheon-${q.kind}`);updateHud();burst(W*.5,H*.47,'#e8c56a',24);S.pantheonRound++;
   if(S.pantheonRound<PANTHEON_TRIALS.length){toast(`${q.title} 成功 ─ 魂 ${reward}体と一文`,1500);setTimeout(renderPantheonTrial,650);return;}
-  hide(UI.pantheon);setHud(true);modal('STAGE 5 CLEAR','千面の門番から通行札','三つの冥界印が一枚につながった。<br>日本も西洋もインドも、この先では同じ輪廻へ向かう。',[{label:'輪廻の塔へ',action:()=>{closeModal();beginStage(6);}}]);
+  hide(UI.pantheon);setHud(true);modal('STAGE 5 CLEAR','千面の門番から通行札','<span class="gatekeeper-reveal"><img class="gatekeeper-art" src="assets/characters/thousand-faced-gatekeeper.webp" alt="千面の門番"><img class="pass-art" src="assets/props/transit-token-labyrinth.webp" alt="完成した冥界通行印"></span>三つの冥界印が一枚につながった。<br>日本も西洋もインドも、この先では同じ輪廻へ向かう。',[{label:'輪廻の塔へ',action:()=>{closeModal();beginStage(6);}}]);
 }
 
 function startTower(){
@@ -507,7 +565,7 @@ function startTowerLatch(){
 function startHeadless(){S.mode='headless';S.boss={type:'headless',timer:0,attacks:0,state:'warn',success:0};toast('首なし武者の衝撃波 ─ 円陣で三度しのげ',3000);}
 function updateHeadless(dt){
   const b=S.boss;b.timer+=dt;if(b.state==='warn'&&b.timer>1.8){b.state='strike';b.timer=0;b.attacks++;if(S.formation==='circle'){b.success++;burst(W*.5,H*.72,'#8fe3cf',24);toast('円陣が衝撃波をそらした');}else{S.souls=Math.max(1,S.souls-2);S.lost+=2;updateHud();toast('隊列が分断された ─ 円陣に切り替えよう');}}
-  else if(b.state==='strike'&&b.timer>.7){if(b.attacks>=3){S.mode='reaper';S.boss={type:'reaper',timer:0,hits:0,waves:[],spawn:0};Object.assign(S.leader,{x:W*.5,y:H*.76,tx:W*.5,ty:H*.76});setHud(false);toast('死神の試験 ─ 主人公ひとりで八秒逃げ切れ',3000);}else{b.state='warn';b.timer=0;}}
+  else if(b.state==='strike'&&b.timer>.7){if(b.attacks>=3){if(b.success===3&&!S.choices.includes('headless-circle'))S.choices.push('headless-circle');S.mode='reaper';S.boss={type:'reaper',timer:0,hits:0,waves:[],spawn:0};Object.assign(S.leader,{x:W*.5,y:H*.76,tx:W*.5,ty:H*.76});setHud(false);toast('死神の試験 ─ 主人公ひとりで八秒逃げ切れ',3000);}else{b.state='warn';b.timer=0;}}
 }
 function updateReaper(dt){
   const b=S.boss,L=S.leader;b.timer+=dt;b.spawn-=dt;L.x+=(clamp(L.tx,24,W-24)-L.x)*Math.min(1,dt*12);L.y+=(clamp(L.ty,H*.3,H*.86)-L.y)*Math.min(1,dt*12);
@@ -528,11 +586,22 @@ function renderJudgment(){
   q.answers.forEach(([label,value])=>{const b=document.createElement('button');b.className='choice';b.textContent=label;b.onclick=()=>{S.choices.push(value);S.judgmentIndex++;if(S.judgmentIndex<JUDGMENTS.length)renderJudgment();else{hide(UI.judgment);finishGame();}};UI.judgmentChoices.appendChild(b);});
 }
 
+const ENDINGS=[
+  {tier:'dawn',min:58,title:'万灯の夜明け',rank:'万灯の案内役',line:'救われた魂の灯が冥界じゅうへ広がり、星のない空に朝の色が差した。'},
+  {tier:'guide',min:46,title:'光の門へ',rank:'魂灯の案内役',line:'行列の灯は細い道となり、あとから来る魂の足元を照らした。'},
+  {tier:'twilight',min:-Infinity,title:'黄昏の再出発',rank:'黄昏の案内役',line:'光はまだ小さい。それでも主人公は、散った魂を迎えにもう一度冥界へ降りる。'}
+];
+function endingResult(){
+  const compassion=S.choices.filter(x=>['lights','wait','guide','others'].includes(x)).length;
+  const wisdom=S.choices.filter(x=>['number','latch','headless-circle'].includes(x)).length;
+  const merit=S.rescued+S.lanterns*2+compassion*2+wisdom*2-S.lost;
+  return{...ENDINGS.find(e=>merit>=e.min),merit};
+}
 function finishGame(){
   S.mode='ending';S.ending=true;clearSave();setHud(false);show(UI.ending);
-  const compassion=S.choices.filter(x=>['lights','wait','guide','others'].includes(x)).length,merit=S.rescued+S.lanterns*2+compassion*2-S.lost;
-  const rank=merit>=42?'万灯の案内役':merit>=28?'魂灯の案内役':'黄昏の案内役';UI.endingRank.textContent=rank;
-  UI.endingText.innerHTML=`救った魂 ${S.rescued}体。灯した提灯 ${S.lanterns}基。<br>${S.leftLights?'灯り役の二体は、光の門で先に待っていた。':'誰の手も離さず、行列は塔を登りきった。'}<br><br>霊鳥は主人公を空へ運ぶ。<br>次に迷う魂のため、主人公は新しい案内役になった。`;
+  const result=endingResult(),farewell=S.leftLights?'灯り役の二体は、光の門で先に待っていた。':'誰の手も離さず、行列は塔を登りきった。';S.endingTier=result.tier;
+  UI.endingTitle.textContent=result.title;UI.endingRank.textContent=result.rank;
+  UI.endingText.innerHTML=`救った魂 ${S.rescued}体。灯した提灯 ${S.lanterns}基。徳灯 ${result.merit}。<br>${farewell}<br><br>${result.line}<br>霊鳥とともに、次の迷える魂を迎えに行く。`;
   setTimeout(()=>{UI.bee.classList.remove('hidden');UI.bee.animate([{left:'-90px'},{left:(W+90)+'px'}],{duration:6000,easing:'linear'});setTimeout(()=>UI.bee.classList.add('hidden'),6200);},1200);
 }
 
@@ -542,8 +611,21 @@ function update(dt){
 }
 
 function drawCover(img,alpha=1){if(!img||!img.complete||!img.naturalWidth)return false;const sc=Math.max(W/img.naturalWidth,H/img.naturalHeight),dw=img.naturalWidth*sc,dh=img.naturalHeight*sc;ctx.globalAlpha=alpha;ctx.drawImage(img,(W-dw)/2,(H-dh)/2,dw,dh);ctx.globalAlpha=1;return true;}
+function drawPantheonMobs(){
+  if(imageReady(IMG.paperLantern)){
+    [[.1,.2,.72],[.9,.23,.62],[.12,.78,.48],[.88,.73,.44]].forEach((p,i)=>{const h=58*p[2]+26,w=h*.69,bob=Math.sin(S.time*2+i)*2;ctx.save();ctx.globalAlpha=.72;ctx.imageSmoothingEnabled=false;ctx.shadowColor='rgba(255,141,54,.5)';ctx.shadowBlur=14;ctx.drawImage(IMG.paperLantern,W*p[0]-w/2,H*p[1]-h/2+bob,w,h);ctx.restore();});
+  }
+  if(imageReady(IMG.littleSoul)){
+    [[.14,.58],[.86,.52],[.78,.84]].forEach((p,i)=>{const bob=Math.sin(S.time*2.8+i*1.7)*7,h=48+i*4,w=h*.615;ctx.save();ctx.globalAlpha=.68;ctx.imageSmoothingEnabled=false;ctx.shadowColor='rgba(143,227,207,.58)';ctx.shadowBlur=12;ctx.drawImage(IMG.littleSoul,W*p[0]-w/2,H*p[1]-h/2+bob,w,h);ctx.restore();});
+  }
+}
 function drawPantheonBackdrop(){
-  const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'#120d29');g.addColorStop(.52,'#241437');g.addColorStop(1,'#071a25');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);drawCover(IMG.underworld,.34);
+  const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'#120d29');g.addColorStop(.52,'#241437');g.addColorStop(1,'#071a25');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+  if(drawCover(IMG.pantheon,.9)){
+    const shade=ctx.createLinearGradient(0,0,0,H);shade.addColorStop(0,'rgba(5,5,14,.18)');shade.addColorStop(.55,'rgba(5,5,14,.08)');shade.addColorStop(1,'rgba(5,5,14,.3)');ctx.fillStyle=shade;ctx.fillRect(0,0,W,H);
+    drawPantheonMobs();return;
+  }
+  drawCover(IMG.underworld,.34);
   ctx.fillStyle='rgba(8,5,18,.36)';ctx.fillRect(0,0,W,H);
   const halo=ctx.createRadialGradient(W*.5,H*.2,8,W*.5,H*.2,W*.34);halo.addColorStop(0,'rgba(232,197,106,.46)');halo.addColorStop(.46,'rgba(155,107,242,.18)');halo.addColorStop(1,'rgba(5,5,14,0)');ctx.fillStyle=halo;ctx.beginPath();ctx.arc(W*.5,H*.2,W*.34,0,Math.PI*2);ctx.fill();
   ctx.save();ctx.translate(W*.5,H*.2);ctx.strokeStyle='rgba(232,197,106,.48)';ctx.lineWidth=2;for(let r=32;r<92;r+=18){ctx.beginPath();ctx.arc(0,0,r,0,Math.PI*2);ctx.stroke();}for(let i=0;i<12;i++){const a=i/12*Math.PI*2;ctx.beginPath();ctx.moveTo(Math.cos(a)*28,Math.sin(a)*28);ctx.lineTo(Math.cos(a)*92,Math.sin(a)*92);ctx.stroke();}ctx.restore();
@@ -553,33 +635,69 @@ function drawPantheonBackdrop(){
   ctx.fillStyle='rgba(196,151,73,.34)';ctx.beginPath();ctx.moveTo(W*.68,H*.61);ctx.lineTo(W*.88,H*.61);ctx.lineTo(W*.78,H*.43);ctx.closePath();ctx.fill();
   ctx.strokeStyle='rgba(143,227,207,.55)';ctx.fillStyle='rgba(143,227,207,.16)';ctx.lineWidth=2;for(let i=0;i<5;i++){const x=W*(.18+i*.16),y=H*(.76+(i%2)*.07),r=18+(i%3)*5;ctx.beginPath();ctx.ellipse(x,y,r,r*.42,0,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.beginPath();ctx.moveTo(x-r*.7,y);ctx.quadraticCurveTo(x,y-r*1.5,x+r*.7,y);ctx.stroke();}
   for(let i=0;i<9;i++){const x=(i*79+31)%W,y=H*(.12+((i*47)%58)/100);ctx.fillStyle=i%2?'rgba(232,197,106,.72)':'rgba(143,227,207,.66)';ctx.beginPath();ctx.arc(x,y,3+Math.sin(S.time*2+i),0,Math.PI*2);ctx.fill();}
+  drawPantheonMobs();
 }
 function drawBackground(){
   if(S.stage===5){drawPantheonBackdrop();return;}
-  const img=S.stage===1?IMG.cemetery:S.stage===3?IMG.river:IMG.underworld;const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'#111126');g.addColorStop(1,'#090912');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);drawCover(img,.58);ctx.fillStyle='rgba(5,5,14,.28)';ctx.fillRect(0,0,W,H);
+  const img=S.stage===1?IMG.cemetery:S.stage===3?IMG.river:S.stage===6?IMG.tower:IMG.underworld;
+  const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'#111126');g.addColorStop(1,'#090912');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+  drawCover(img,S.stage===6?.78:.58);ctx.fillStyle=S.stage===6?'rgba(5,5,14,.18)':'rgba(5,5,14,.28)';ctx.fillRect(0,0,W,H);
 }
 function drawSoul(x,y,s,r=10,alpha=1){
+  if(imageReady(IMG.littleSoul)){
+    const h=Math.max(28,r*3.8),w=h*.615;ctx.save();ctx.globalAlpha=alpha;ctx.imageSmoothingEnabled=false;ctx.shadowColor='rgba(143,227,207,.65)';ctx.shadowBlur=10;ctx.drawImage(IMG.littleSoul,x-w/2,y-h*.52,w,h);ctx.restore();return;
+  }
   ctx.save();ctx.globalAlpha=alpha;ctx.shadowColor='rgba(143,227,207,.6)';ctx.shadowBlur=10;ctx.fillStyle=`hsl(${s.hue},80%,88%)`;ctx.beginPath();ctx.moveTo(x,y-r-5);ctx.quadraticCurveTo(x+r,y-2,x,y+r);ctx.quadraticCurveTo(x-r,y-2,x,y-r-5);ctx.fill();ctx.shadowBlur=0;ctx.fillStyle='#15152b';ctx.beginPath();ctx.arc(x-3,y-2,1.8,0,Math.PI*2);ctx.arc(x+3,y-2,1.8,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#e8c56a';ctx.fillStyle='#e8c56a';ctx.lineWidth=2;
   if(s.acc==='hat'){ctx.fillRect(x-5,y-r-9,10,3);ctx.fillRect(x-3,y-r-14,6,5);}else if(s.acc==='ribbon'){ctx.beginPath();ctx.arc(x-5,y-r-5,3,0,Math.PI*2);ctx.arc(x,y-r-5,3,0,Math.PI*2);ctx.fill();}else if(s.acc==='ears'){ctx.beginPath();ctx.moveTo(x-6,y-r);ctx.lineTo(x-3,y-r-9);ctx.lineTo(x,y-r);ctx.moveTo(x,y-r);ctx.lineTo(x+3,y-r-9);ctx.lineTo(x+6,y-r);ctx.fill();}else if(s.acc==='beard'){ctx.fillRect(x-4,y+4,8,2);}else if(s.acc==='leaf'){ctx.beginPath();ctx.ellipse(x+3,y-r-8,5,2,-.5,0,Math.PI*2);ctx.fill();}
   ctx.restore();
 }
-function drawLeader(x,y){drawSoul(x,y,{hue:188,acc:'none'},14);const f=7+Math.sin(S.time*7)*2;ctx.fillStyle='#8fe3cf';ctx.beginPath();ctx.moveTo(x,y-35-f);ctx.quadraticCurveTo(x+6,y-27,x,y-20);ctx.quadraticCurveTo(x-6,y-27,x,y-35-f);ctx.fill();}
+function drawFriendlySoul(x,y,s,r=10,alpha=1){
+  drawSoul(x,y,s,r,alpha);
+}
+function imageReady(img){return Boolean(img&&img.complete&&img.naturalWidth);}
+function drawLeader(x,y){
+  if(imageReady(IMG.guideSoul)){
+    const bob=Math.sin(S.time*5)*2,w=46,h=58;ctx.save();ctx.globalAlpha=.98;ctx.imageSmoothingEnabled=false;ctx.shadowColor='rgba(143,227,207,.62)';ctx.shadowBlur=12;ctx.drawImage(IMG.guideSoul,x-w/2,y-h*.6+bob,w,h);ctx.restore();return;
+  }
+  drawSoul(x,y,{hue:188,acc:'none'},14);const f=7+Math.sin(S.time*7)*2;ctx.fillStyle='#8fe3cf';ctx.beginPath();ctx.moveTo(x,y-35-f);ctx.quadraticCurveTo(x+6,y-27,x,y-20);ctx.quadraticCurveTo(x-6,y-27,x,y-35-f);ctx.fill();
+}
 function followerPosition(i){
   if(S.formation==='line'){return S.trail[Math.min((i+1)*10,S.trail.length-1)]||S.leader;}
   const base=S.trail[Math.min(24+Math.floor(i/8)*10,S.trail.length-1)]||S.leader,a=i*2.4;
   if(S.formation==='circle'){const r=24+Math.floor(i/10)*12;return{x:base.x+Math.cos(a)*r,y:base.y+Math.sin(a)*r};}
   const r=34+Math.floor(i/7)*15;return{x:base.x+Math.cos(a)*r,y:base.y+Math.sin(a)*r*.65};
 }
-function drawLantern(l){ctx.fillStyle=l.lit?'#e8c56a':'#45455d';ctx.fillRect(l.x-3,l.y,6,25);ctx.beginPath();ctx.ellipse(l.x,l.y-13,11,15,0,0,Math.PI*2);ctx.fill();if(l.lit){ctx.fillStyle='rgba(232,197,106,.18)';ctx.beginPath();ctx.arc(l.x,l.y-13,70,0,Math.PI*2);ctx.fill();}}
-function drawTorii(x,y){ctx.fillStyle='#c8452c';ctx.fillRect(x-54,y-48,8,90);ctx.fillRect(x+46,y-48,8,90);ctx.fillRect(x-66,y-54,132,10);ctx.fillRect(x-56,y-30,112,7);ctx.fillStyle='rgba(232,197,106,.22)';ctx.beginPath();ctx.arc(x,y,42,0,Math.PI*2);ctx.fill();}
+function drawLantern(l){
+  const paper=l.variant==='paper',img=paper?IMG.paperLantern:IMG.stoneLantern;
+  if(imageReady(img)){
+    const h=paper?72:92,w=h*(paper ? .69 : .49),cy=l.y-12;
+    if(l.lit){const glow=ctx.createRadialGradient(l.x,cy,4,l.x,cy,78);glow.addColorStop(0,'rgba(255,185,78,.38)');glow.addColorStop(1,'rgba(232,197,106,0)');ctx.fillStyle=glow;ctx.beginPath();ctx.arc(l.x,cy,78,0,Math.PI*2);ctx.fill();}
+    ctx.save();ctx.imageSmoothingEnabled=false;ctx.globalAlpha=l.lit?1:.58;ctx.filter=l.lit?'none':'grayscale(.78) brightness(.52)';ctx.shadowColor=l.lit?'rgba(255,170,70,.52)':'transparent';ctx.shadowBlur=l.lit?14:0;ctx.drawImage(img,l.x-w/2,l.y-h*.62,w,h);ctx.restore();return;
+  }
+  ctx.fillStyle=l.lit?'#e8c56a':'#45455d';ctx.fillRect(l.x-3,l.y,6,25);ctx.beginPath();ctx.ellipse(l.x,l.y-13,11,15,0,0,Math.PI*2);ctx.fill();if(l.lit){ctx.fillStyle='rgba(232,197,106,.18)';ctx.beginPath();ctx.arc(l.x,l.y-13,70,0,Math.PI*2);ctx.fill();}
+}
+const GATE_LABELS=['','彼岸門','鬼火門','忘却門','星無門','万神門','輪廻門'];
+function drawTorii(x,y){
+  const w=190,h=185,label=GATE_LABELS[S.stage]||'輪廻門';ctx.save();
+  if(imageReady(IMG.torii)){ctx.imageSmoothingEnabled=false;ctx.shadowColor='rgba(143,227,207,.28)';ctx.shadowBlur=18;ctx.drawImage(IMG.torii,x-w/2,y-h*.62,w,h);ctx.shadowBlur=0;}
+  else{ctx.fillStyle='#c8452c';ctx.fillRect(x-54,y-48,8,90);ctx.fillRect(x+46,y-48,8,90);ctx.fillRect(x-66,y-54,132,10);ctx.fillRect(x-56,y-30,112,7);}
+  const glyphs=[...label],plaqueY=y-h*.378,step=8;ctx.textAlign='center';ctx.textBaseline='middle';ctx.font='900 8px "Yu Mincho",serif';ctx.fillStyle='#17121f';ctx.strokeStyle='rgba(244,218,139,.82)';ctx.lineWidth=.8;
+  glyphs.forEach((ch,i)=>{const ty=plaqueY+(i-(glyphs.length-1)/2)*step;ctx.strokeText(ch,x,ty);ctx.fillText(ch,x,ty);});ctx.restore();
+}
+function drawHazard(h){
+  const x=h.x+Math.sin(h.phase)*12,y=h.y+Math.cos(h.phase*.7)*8;
+  if(h.kind==='oniWisp'&&imageReady(IMG.oniWisp)){const dh=h.r*3.25,dw=dh*(2/3);ctx.save();ctx.globalAlpha=.78;ctx.imageSmoothingEnabled=false;ctx.shadowColor='rgba(57,247,182,.45)';ctx.shadowBlur=12;ctx.drawImage(IMG.oniWisp,x-dw/2,y-dh/2,dw,dh);ctx.restore();return;}
+  if(h.kind==='moth'&&imageReady(IMG.moth)){const dh=h.r*3.5,dw=dh*.671;ctx.save();ctx.globalAlpha=.78;ctx.imageSmoothingEnabled=false;ctx.shadowColor='rgba(155,107,242,.5)';ctx.shadowBlur=13;ctx.drawImage(IMG.moth,x-dw/2,y-dh/2,dw,dh);ctx.restore();return;}
+  ctx.fillStyle=h.kind==='moth'?'rgba(138,90,175,.58)':'rgba(155,107,242,.52)';ctx.beginPath();ctx.ellipse(x,y,h.r,h.r*(h.kind==='moth'?.52:1),0,0,Math.PI*2);ctx.fill();if(h.kind==='moth'){ctx.strokeStyle='rgba(220,236,255,.35)';ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x-h.r,y-h.r*.65);ctx.moveTo(x,y);ctx.lineTo(x+h.r,y-h.r*.65);ctx.stroke();}
+}
 function drawExplore(){
   drawBackground();ctx.save();ctx.translate(0,-S.cam);
   ctx.strokeStyle='rgba(220,236,255,.12)';ctx.lineWidth=2;ctx.setLineDash([4,12]);ctx.beginPath();ctx.moveTo(W*.5,WORLD_H-H*.15);ctx.bezierCurveTo(W*.15,WORLD_H*.7,W*.85,WORLD_H*.42,S.exit.x,S.exit.y);ctx.stroke();ctx.setLineDash([]);
   for(let i=0;i<42;i++){const x=(i*83)%W,y=(i*127)%WORLD_H;ctx.fillStyle='rgba(212,58,79,.7)';ctx.beginPath();ctx.arc(x,y,3,0,Math.PI*2);ctx.fill();}
   S.lanternObjs.forEach(drawLantern);S.echoes.forEach(e=>{if(!e.heard){ctx.strokeStyle='rgba(143,227,207,.45)';ctx.lineWidth=2;ctx.beginPath();ctx.arc(e.x,e.y,18+Math.sin(S.time*4+e.phase)*6,0,Math.PI*2);ctx.stroke();}});
-  S.pickups.forEach(p=>{if(!p.got&&!p.hidden)drawSoul(p.x,p.y+Math.sin(S.time*3+p.s.phase)*3,p.s,11,.9);});
-  S.hazards.forEach(h=>{const x=h.x+Math.sin(h.phase)*12,y=h.y+Math.cos(h.phase*.7)*8;ctx.fillStyle=h.kind==='moth'?'rgba(138,90,175,.58)':'rgba(155,107,242,.52)';ctx.beginPath();ctx.ellipse(x,y,h.r,h.r*(h.kind==='moth'?.52:1),0,0,Math.PI*2);ctx.fill();if(h.kind==='moth'){ctx.strokeStyle='rgba(220,236,255,.35)';ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x-h.r,y-h.r*.65);ctx.moveTo(x,y);ctx.lineTo(x+h.r,y-h.r*.65);ctx.stroke();}});
-  drawTorii(S.exit.x,S.exit.y);for(let i=Math.min(S.followers.length,50)-1;i>=0;i--){const p=followerPosition(i);drawSoul(p.x,p.y,S.followers[i],9,.92);}drawLeader(S.leader.x,S.leader.y);
+  S.pickups.forEach(p=>{if(!p.got&&!p.hidden)drawFriendlySoul(p.x,p.y+Math.sin(S.time*3+p.s.phase)*3,p.s,11,.9);});
+  S.hazards.forEach(drawHazard);
+  drawTorii(S.exit.x,S.exit.y);for(let i=Math.min(S.followers.length,50)-1;i>=0;i--){const p=followerPosition(i);drawFriendlySoul(p.x,p.y,S.followers[i],9,.92);}drawLeader(S.leader.x,S.leader.y);
   S.parts.forEach(p=>{ctx.globalAlpha=p.life;ctx.fillStyle=p.col;ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;});
   const light=(92+Math.min(50,S.souls)*5+S.lanterns*12)*(S.stage===4?1:1.25),d=ctx.createRadialGradient(S.leader.x,S.leader.y,light*.35,S.leader.x,S.leader.y,light*1.8);d.addColorStop(0,'rgba(4,4,12,0)');d.addColorStop(1,S.stage===4?'rgba(3,3,10,.97)':'rgba(3,3,10,.72)');ctx.fillStyle=d;ctx.fillRect(0,S.cam-30,W,H+60);ctx.restore();
 }
@@ -587,23 +705,30 @@ function drawExplore(){
 function drawBossImage(img,x,y,w,h){
   ctx.save();ctx.shadowColor='rgba(155,107,242,.6)';ctx.shadowBlur=24;ctx.fillStyle='#0b0b18';ctx.fillRect(x-w/2-4,y-h/2-4,w+8,h+8);ctx.shadowBlur=0;ctx.strokeStyle='#e8c56a';ctx.lineWidth=3;ctx.strokeRect(x-w/2-4,y-h/2-4,w+8,h+8);if(img&&img.complete&&img.naturalWidth){const sc=Math.max(w/img.naturalWidth,h/img.naturalHeight),dw=img.naturalWidth*sc,dh=img.naturalHeight*sc;ctx.save();ctx.beginPath();ctx.rect(x-w/2,y-h/2,w,h);ctx.clip();ctx.drawImage(img,x-dw/2,y-dh/2,dw,dh);ctx.restore();}ctx.restore();
 }
+function drawBossSprite(img,x,y,maxW,maxH,scale=1){
+  if(!img||!img.complete||!img.naturalWidth)return false;const fit=Math.min(maxW/img.naturalWidth,maxH/img.naturalHeight)*scale,dw=img.naturalWidth*fit,dh=img.naturalHeight*fit;
+  ctx.save();ctx.shadowColor='rgba(155,107,242,.58)';ctx.shadowBlur=24;ctx.drawImage(img,x-dw/2,y-dh/2,dw,dh);ctx.restore();return true;
+}
 function drawSoulBoss(){
-  drawBackground();const bx=W*.5,by=H*.43;drawBossImage(IMG.soulEater,bx,by,Math.min(W*.58,220),Math.min(H*.34,280));ctx.fillStyle='#e8c56a';ctx.textAlign='center';ctx.font='700 18px serif';ctx.fillText('魂喰らい',bx,H*.14);ctx.font='12px serif';ctx.fillStyle='#dcecff';ctx.fillText(`奪われた魂 ${S.boss.freed}/6`,bx,H*.18);
+  drawBackground();const bx=W*.5,by=H*.43;if(!drawBossSprite(IMG.soulEater,bx,by,Math.min(W*.72,270),Math.min(H*.45,360)))drawBossImage(IMG.soulEater,bx,by,Math.min(W*.58,220),Math.min(H*.34,280));ctx.fillStyle='#e8c56a';ctx.textAlign='center';ctx.font='700 18px serif';ctx.fillText('魂喰らい',bx,H*.14);ctx.font='12px serif';ctx.fillStyle='#dcecff';ctx.fillText(`奪われた魂 ${S.boss.freed}/6`,bx,H*.18);
   S.boss.orbs.forEach((o,i)=>{if(o.freed)return;const x=bx+Math.cos(o.a+S.time*.5)*o.r,y=by+Math.sin(o.a+S.time*.5)*o.r*.55;drawSoul(x,y,makeSoul(i),12);});ctx.textAlign='left';
 }
 function drawMothBoss(){
   drawBackground();const bx=W*.5,by=H*.42,pulse=1+Math.sin(S.time*4)*.08;
-  ctx.save();ctx.translate(bx,by);ctx.scale(pulse,pulse);ctx.fillStyle='rgba(155,107,242,.72)';ctx.beginPath();ctx.ellipse(-48,0,55,82,-.55,0,Math.PI*2);ctx.ellipse(48,0,55,82,.55,0,Math.PI*2);ctx.fill();ctx.fillStyle='#302044';ctx.beginPath();ctx.ellipse(0,10,19,65,0,0,Math.PI*2);ctx.fill();ctx.fillStyle='#e8c56a';ctx.beginPath();ctx.arc(-6,-36,3,0,Math.PI*2);ctx.arc(6,-36,3,0,Math.PI*2);ctx.fill();ctx.restore();
+  if(!drawBossSprite(IMG.moth,bx,by+Math.sin(S.time*2.4)*5,Math.min(W*.58,226),Math.min(H*.37,310),pulse)){
+    ctx.save();ctx.translate(bx,by);ctx.scale(pulse,pulse);ctx.fillStyle='rgba(155,107,242,.72)';ctx.beginPath();ctx.ellipse(-48,0,55,82,-.55,0,Math.PI*2);ctx.ellipse(48,0,55,82,.55,0,Math.PI*2);ctx.fill();ctx.fillStyle='#302044';ctx.beginPath();ctx.ellipse(0,10,19,65,0,0,Math.PI*2);ctx.fill();ctx.fillStyle='#e8c56a';ctx.beginPath();ctx.arc(-6,-36,3,0,Math.PI*2);ctx.arc(6,-36,3,0,Math.PI*2);ctx.fill();ctx.restore();
+  }
   S.boss.sleepers.forEach((s,i)=>{if(s.woken)return;const x=bx+Math.cos(s.a+S.time*.25)*105,y=by+Math.sin(s.a+S.time*.25)*65;drawSoul(x,y,makeSoul(i),11,.72);});
   ctx.fillStyle='#e8c56a';ctx.textAlign='center';ctx.font='700 18px serif';ctx.fillText('冥界蛾',bx,H*.13);ctx.fillStyle='#dcecff';ctx.font='12px serif';ctx.fillText(`目覚めた魂 ${S.boss.woken}/5`,bx,H*.17);ctx.textAlign='left';
 }
 function drawTower(){
   drawBackground();ctx.fillStyle='rgba(7,7,16,.42)';ctx.fillRect(W*.12,0,W*.76,H);ctx.strokeStyle='rgba(232,197,106,.3)';ctx.lineWidth=3;ctx.strokeRect(W*.12,0,W*.76,H);for(let y=(S.time*90)%70-70;y<H;y+=70){ctx.strokeStyle='rgba(220,236,255,.13)';ctx.beginPath();ctx.moveTo(W*.15,y);ctx.lineTo(W*.85,y);ctx.stroke();}
-  S.tower.objects.forEach(o=>{if(o.kind==='soul')drawSoul(o.x,o.y,makeSoul(Math.floor(o.x)),10);else{ctx.fillStyle='#777080';ctx.beginPath();ctx.moveTo(o.x,o.y-o.r);ctx.lineTo(o.x+o.r,o.y+o.r);ctx.lineTo(o.x-o.r,o.y+o.r);ctx.closePath();ctx.fill();}});
+  S.tower.objects.forEach(o=>{if(o.kind==='soul')drawSoul(o.x,o.y,makeSoul(Math.floor(o.x)),10);else if(imageReady(IMG.towerRock)){const d=o.r*2.7;ctx.save();ctx.imageSmoothingEnabled=false;ctx.shadowColor='rgba(80,224,255,.38)';ctx.shadowBlur=9;ctx.drawImage(IMG.towerRock,o.x-d/2,o.y-d/2,d,d);ctx.restore();}else{ctx.fillStyle='#777080';ctx.beginPath();ctx.moveTo(o.x,o.y-o.r);ctx.lineTo(o.x+o.r,o.y+o.r);ctx.lineTo(o.x-o.r,o.y+o.r);ctx.closePath();ctx.fill();}});
   drawLeader(S.leader.x,S.leader.y);ctx.fillStyle='#e8c56a';ctx.font='12px serif';ctx.textAlign='center';ctx.fillText(`塔の中層まで ${Math.max(0,Math.ceil((560-S.tower.distance)/60))}`,W*.5,H*.14);ctx.textAlign='left';
 }
 function drawHeadless(){
   drawBackground();const x=W*.5,y=H*.38,b=S.boss,warn=b.state==='warn'?(1-b.timer/1.8):0;
+  if(!drawBossSprite(IMG.headless,x,y+Math.sin(S.time*2.2)*4,Math.min(W*.68,260),Math.min(H*.46,360),1+warn*.06)){
   ctx.save();ctx.shadowColor='rgba(155,107,242,.65)';ctx.shadowBlur=24;
   const robe=ctx.createLinearGradient(x-70,y-60,x+70,y+100);robe.addColorStop(0,'#66566d');robe.addColorStop(.45,'#302a3c');robe.addColorStop(1,'#171522');ctx.fillStyle=robe;
   ctx.beginPath();ctx.moveTo(x-58,y+100);ctx.quadraticCurveTo(x-64,y+22,x-48,y-42);ctx.lineTo(x-22,y-68);ctx.lineTo(x+22,y-68);ctx.lineTo(x+48,y-42);ctx.quadraticCurveTo(x+64,y+22,x+58,y+100);ctx.closePath();ctx.fill();ctx.shadowBlur=0;
@@ -615,30 +740,33 @@ function drawHeadless(){
   ctx.strokeStyle='#dcecff';ctx.lineWidth=9;ctx.beginPath();ctx.moveTo(x+74,y+39);ctx.lineTo(x-82,y+91);ctx.stroke();ctx.strokeStyle='#75859c';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(x+70,y+35);ctx.lineTo(x-84,y+87);ctx.stroke();ctx.strokeStyle='#e8c56a';ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(x+55,y+36);ctx.lineTo(x+71,y+56);ctx.stroke();
   ctx.fillStyle='#8fe3cf';ctx.globalAlpha=.86;ctx.beginPath();ctx.moveTo(x,y-82);ctx.quadraticCurveTo(x+20,y-104,x+4,y-132);ctx.quadraticCurveTo(x-22,y-104,x,y-82);ctx.fill();ctx.globalAlpha=1;ctx.strokeStyle='#e8c56a';ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(x,y-70,21,8,0,0,Math.PI*2);ctx.stroke();
   ctx.strokeStyle='rgba(143,227,207,.42)';ctx.lineWidth=2;for(let i=0;i<3;i++){ctx.beginPath();ctx.arc(x,y-87,30+i*13,S.time*.6+i,S.time*.6+i+2.1);ctx.stroke();}ctx.restore();
+  }
   ctx.strokeStyle=b.state==='strike'?'#ef685d':'rgba(232,197,106,.8)';ctx.lineWidth=b.state==='strike'?10:3;ctx.beginPath();ctx.arc(W*.5,H*.72,50+warn*150,0,Math.PI*2);ctx.stroke();ctx.fillStyle='#dcecff';ctx.textAlign='center';ctx.font='700 17px serif';ctx.fillText('首なし武者',W*.5,H*.12);ctx.font='13px serif';ctx.fillText(`衝撃波 ${b.attacks}/3　円陣成功 ${b.success}`,W*.5,H*.16);ctx.textAlign='left';
 }
 function drawReaper(){
-  drawBackground();drawBossImage(IMG.reaper,W*.5,H*.26,Math.min(W*.45,170),Math.min(H*.24,190));ctx.fillStyle='rgba(4,4,12,.58)';ctx.fillRect(0,H*.38,W,H*.62);S.boss.waves.forEach(w=>{ctx.strokeStyle='#dcecff';ctx.lineWidth=4;ctx.beginPath();ctx.arc(w.x,w.y,w.r,Math.PI*.1,Math.PI*1.45);ctx.stroke();});drawLeader(S.leader.x,S.leader.y);ctx.fillStyle='#e8c56a';ctx.textAlign='center';ctx.font='700 16px serif';ctx.fillText(`死神の試験　${Math.max(0,8-S.boss.timer).toFixed(1)}`,W*.5,H*.13);ctx.font='12px serif';ctx.fillStyle='#dcecff';ctx.fillText('主人公だけで鎌の影を避ける',W*.5,H*.17);ctx.textAlign='left';
+  drawBackground();if(!drawBossSprite(IMG.reaper,W*.5,H*.3,Math.min(W*.48,190),Math.min(H*.34,270)))drawBossImage(IMG.reaper,W*.5,H*.26,Math.min(W*.45,170),Math.min(H*.24,190));ctx.fillStyle='rgba(4,4,12,.58)';ctx.fillRect(0,H*.42,W,H*.58);S.boss.waves.forEach(w=>{ctx.strokeStyle='#dcecff';ctx.lineWidth=4;ctx.beginPath();ctx.arc(w.x,w.y,w.r,Math.PI*.1,Math.PI*1.45);ctx.stroke();});drawLeader(S.leader.x,S.leader.y);ctx.fillStyle='#e8c56a';ctx.textAlign='center';ctx.font='700 16px serif';ctx.fillText(`死神の試験　${Math.max(0,8-S.boss.timer).toFixed(1)}`,W*.5,H*.13);ctx.font='12px serif';ctx.fillStyle='#dcecff';ctx.fillText('主人公だけで鎌の影を避ける',W*.5,H*.17);ctx.textAlign='left';
 }
 function drawEndingBackdrop(){
-  drawCover(IMG.bird,.78);const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'rgba(203,232,255,.08)');g.addColorStop(1,'rgba(5,5,14,.76)');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);for(let i=0;i<Math.min(36,S.souls+S.rescued);i++){const a=i*2.4,r=35+Math.floor(i/8)*20,x=W*.5+Math.cos(a)*r,y=H*.62+Math.sin(a)*r*.42;drawSoul(x,y,makeSoul(i),7,.7);}}
-function drawJudgmentBackdrop(){drawBackground();drawBossImage(IMG.enma,W*.5,H*.44,Math.min(W*.64,250),Math.min(H*.42,340));ctx.fillStyle='rgba(5,5,14,.08)';ctx.fillRect(0,0,W,H);}
+  drawBackground();const strength={dawn:1,guide:.72,twilight:.44}[S.endingTier]||.72,glow=ctx.createRadialGradient(W*.5,H*.16,8,W*.5,H*.16,H*.58);glow.addColorStop(0,`rgba(225,249,255,${.46*strength})`);glow.addColorStop(1,'rgba(5,5,14,0)');ctx.fillStyle=glow;ctx.fillRect(0,0,W,H);ctx.fillStyle=`rgba(5,5,14,${.42-.2*strength})`;ctx.fillRect(0,0,W,H);drawBossSprite(IMG.bird,W*.5,H*.31,Math.min(W*.78,300),Math.min(H*.5,410));const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,`rgba(203,232,255,${.04+.08*strength})`);g.addColorStop(1,'rgba(5,5,14,.76)');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);const lights=Math.min(36,Math.max(8,Math.round((S.souls+S.rescued)*strength)));for(let i=0;i<lights;i++){const a=i*2.4,r=35+Math.floor(i/8)*20,x=W*.5+Math.cos(a)*r,y=H*.56+Math.sin(a)*r*.42;drawSoul(x,y,makeSoul(i),7,.7);}}
+function drawJudgmentBackdrop(){drawBackground();if(!drawBossSprite(IMG.enma,W*.5,H*.43,Math.min(W*.68,270),Math.min(H*.46,380)))drawBossImage(IMG.enma,W*.5,H*.44,Math.min(W*.64,250),Math.min(H*.42,340));ctx.fillStyle='rgba(5,5,14,.08)';ctx.fillRect(0,0,W,H);}
 function draw(){
   ctx.clearRect(0,0,W,H);
   if(S.mode==='explore')drawExplore();else if(S.mode==='soulBoss')drawSoulBoss();else if(S.mode==='mothBoss')drawMothBoss();else if(S.mode==='tower')drawTower();else if(S.mode==='headless')drawHeadless();else if(S.mode==='reaper')drawReaper();else if(S.mode==='judgment')drawJudgmentBackdrop();else if(S.mode==='ending')drawEndingBackdrop();else{drawBackground();}
   if(S.mode!=='explore')S.parts.forEach(p=>{ctx.globalAlpha=p.life;ctx.fillStyle=p.col;ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;});
 }
 
-const localParams=new URLSearchParams(location.search),localTestStage=Number(localParams.get('stage')),localTestBoss=localParams.get('boss');
+const localParams=new URLSearchParams(location.search),localTestStage=Number(localParams.get('stage')),localTestBoss=localParams.get('boss'),localEndingTest=localParams.get('ending');
 const localTesting=location.hostname==='127.0.0.1'||location.hostname==='localhost';
-if(localTesting&&['headless','moth','farewell','judgment','ending'].includes(localTestBoss)){
+if(localTesting&&['soul','headless','moth','farewell','reaper','judgment','ending'].includes(localTestBoss)){
   setTimeout(()=>{
     hide(UI.title);Object.assign(S,{stage:['moth','farewell'].includes(localTestBoss)?4:6,souls:18,coins:0,lanterns:5,rescued:17,lost:0,choices:[],leftLights:0});updateHud();
-    if(localTestBoss==='headless'){setHud(true);startHeadless();}
+    if(localTestBoss==='soul'){S.stage=3;startSoulEater();}
+    else if(localTestBoss==='headless'){setHud(true);startHeadless();}
     else if(localTestBoss==='moth'){S.mode='explore';startMothBoss();}
     else if(localTestBoss==='farewell'){S.mode='mothBoss';lightFarewell();}
+    else if(localTestBoss==='reaper'){S.mode='reaper';S.boss={type:'reaper',timer:0,hits:0,waves:[],spawn:0};Object.assign(S.leader,{x:W*.5,y:H*.76,tx:W*.5,ty:H*.76});setHud(false);}
     else if(localTestBoss==='judgment'){startJudgment();}
-    else finishGame();
+    else{if(localEndingTest==='dawn')Object.assign(S,{rescued:44,lanterns:5,lost:0,choices:['lights','wait','others','guide','number','latch','headless-circle'],leftLights:2});else if(localEndingTest==='guide')Object.assign(S,{rescued:30,lanterns:5,lost:0,choices:['together','wait','others','guide','number','latch','headless-circle'],leftLights:0});else if(localEndingTest==='twilight')Object.assign(S,{rescued:26,lanterns:3,lost:8,choices:['together','wait','self','others'],leftLights:0});finishGame();}
   },0);
 }else if(localTesting&&localTestStage>=1&&localTestStage<=6){
   setTimeout(()=>{
@@ -647,7 +775,8 @@ if(localTesting&&['headless','moth','farewell','judgment','ending'].includes(loc
     beginStage(localTestStage,true);
   },0);
 }
-function loop(now){const dt=Math.min(.04,(now-last)/1000);last=now;update(dt);draw();requestAnimationFrame(loop);}requestAnimationFrame(loop);
+function loop(now){const dt=Math.min(.04,(now-last)/1000);last=now;update(dt);draw();if(S.mode==='pin')drawPin();requestAnimationFrame(loop);}requestAnimationFrame(loop);
 </script>
+<script src="assets/arcade-game-menu.js" data-home="https://www.teru44.net/games"></script>
 </body>
 </html>
