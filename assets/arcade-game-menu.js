@@ -9,7 +9,7 @@
 
   const currentScript = document.currentScript;
   const homeUrl =
-    (currentScript && currentScript.dataset.home) || "https://www.teru44.net/games";
+    (currentScript && currentScript.dataset.home) || "https://play.teru44.net/";
 
   function isIPhone() {
     const ua = navigator.userAgent || "";
